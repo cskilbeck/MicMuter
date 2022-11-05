@@ -15,13 +15,6 @@ namespace chs::mic_muter
 
     //////////////////////////////////////////////////////////////////////
 
-    settings_t::overlay_setting *settings_t::get_overlay_setting(bool muted, bool attached)
-    {
-        return &overlay[get_overlay_id(muted, attached)];
-    }
-
-    //////////////////////////////////////////////////////////////////////
-
     HRESULT settings_t::save()
     {
         RECT rc;

@@ -113,8 +113,6 @@ namespace chs::mic_muter
         byte hotkey{ VK_CAPITAL };
         byte modifiers{ keymod_ctrl };
 
-        overlay_setting *get_overlay_setting(bool muted, bool attached);
-
         HRESULT save_run_at_startup();
 
         HRESULT save();
