@@ -18,7 +18,6 @@ namespace chs::mic_muter
 
         //////////////////////////////////////////////////////////////////////
 
-        HRESULT create_solid(uint32 argb, int w, int h);
         HRESULT create_from_svg(char const *svg, int w, int h);
         void destroy();
     };
