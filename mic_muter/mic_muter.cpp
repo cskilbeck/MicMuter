@@ -6,7 +6,7 @@
 
 namespace chs::mic_muter
 {
-    static char const *overlay_names[mic_muter::num_overlay_ids] = { "Muted", "Unmuted", "Disconnected" };
+    static char const *overlay_names[num_overlay_ids] = { "Muted", "Unmuted", "Disconnected" };
 
     int get_overlay_id(bool muted, bool attached)
     {

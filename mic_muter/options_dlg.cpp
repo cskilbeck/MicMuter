@@ -17,7 +17,9 @@ namespace
 
     settings_t old_settings;
 
-    chs::mic_muter::image overlay_img[chs::mic_muter::num_overlay_ids];
+    mic_muter::image overlay_img[mic_muter::num_overlay_ids];
+
+    auto constexpr Ctl = GetDlgItem;
 
     //////////////////////////////////////////////////////////////////////
 
@@ -32,24 +34,24 @@ namespace
     {
         bool enable = s.enabled;
 
-        EnableWindow(GetDlgItem(w, IDC_COMBO_FADEOUT_AFTER), enable);
+        EnableWindow(Ctl(w, IDC_COMBO_FADEOUT_AFTER), enable);
 
         enable &= s.fadeout_time != settings_t::fadeout_after::fadeout_never;
 
-        EnableWindow(GetDlgItem(w, IDC_COMBO_FADEOUT_TO), enable);
-        EnableWindow(GetDlgItem(w, IDC_COMBO_FADEOUT_SPEED), enable);
+        EnableWindow(Ctl(w, IDC_COMBO_FADEOUT_TO), enable);
+        EnableWindow(Ctl(w, IDC_COMBO_FADEOUT_SPEED), enable);
     }
 
     //////////////////////////////////////////////////////////////////////
 
     void setup_option_controls(HWND w, settings_t::overlay_setting const &s)
     {
-        Button_SetCheck(GetDlgItem(w, IDC_CHECK_OVERLAY_ENABLE), s.enabled);
-        ComboBox_SetCurSel(GetDlgItem(w, IDC_COMBO_FADEOUT_AFTER), s.fadeout_time);
-        ComboBox_SetCurSel(GetDlgItem(w, IDC_COMBO_FADEOUT_TO), s.fadeout_to);
-        ComboBox_SetCurSel(GetDlgItem(w, IDC_COMBO_FADEOUT_SPEED), s.fadeout_speed);
+        Button_SetCheck(Ctl(w, IDC_CHECK_OVERLAY_ENABLE), s.enabled);
+        ComboBox_SetCurSel(Ctl(w, IDC_COMBO_FADEOUT_AFTER), s.fadeout_time);
+        ComboBox_SetCurSel(Ctl(w, IDC_COMBO_FADEOUT_TO), s.fadeout_to);
+        ComboBox_SetCurSel(Ctl(w, IDC_COMBO_FADEOUT_SPEED), s.fadeout_speed);
         enable_option_controls(w, s);
-        InvalidateRect(GetDlgItem(w, IDC_STATIC_OPTIONS_OVERLAY_IMAGE), nullptr, false);
+        InvalidateRect(Ctl(w, IDC_STATIC_OPTIONS_OVERLAY_IMAGE), nullptr, false);
     }
 
     //////////////////////////////////////////////////////////////////////
@@ -67,7 +69,7 @@ namespace
 
             // setup position within the tab control
 
-            HWND tab_ctrl = GetDlgItem(parent, IDC_OPTIONS_TAB_CTRL);
+            HWND tab_ctrl = Ctl(parent, IDC_OPTIONS_TAB_CTRL);
             RECT rc;
             GetWindowRect(tab_ctrl, &rc);
             MapWindowPoints(nullptr, parent, reinterpret_cast<LPPOINT>(&rc), 2);
@@ -78,19 +80,19 @@ namespace
             // add strings to the combo boxes
 
             for(auto const *text : settings_t::fadeout_after_names) {
-                ComboBox_AddString(GetDlgItem(dlg, IDC_COMBO_FADEOUT_AFTER), text);
+                ComboBox_AddString(Ctl(dlg, IDC_COMBO_FADEOUT_AFTER), text);
             }
             for(auto const *text : settings_t::fadeout_to_names) {
-                ComboBox_AddString(GetDlgItem(dlg, IDC_COMBO_FADEOUT_TO), text);
+                ComboBox_AddString(Ctl(dlg, IDC_COMBO_FADEOUT_TO), text);
             }
             for(auto const *text : settings_t::fadeout_speed_names) {
-                ComboBox_AddString(GetDlgItem(dlg, IDC_COMBO_FADEOUT_SPEED), text);
+                ComboBox_AddString(Ctl(dlg, IDC_COMBO_FADEOUT_SPEED), text);
             }
 
             // setup overlay image icon
 
             RECT img_rect;
-            GetClientRect(GetDlgItem(dlg, IDC_STATIC_OPTIONS_OVERLAY_IMAGE), &img_rect);
+            GetClientRect(Ctl(dlg, IDC_STATIC_OPTIONS_OVERLAY_IMAGE), &img_rect);
             int img_w = img_rect.right - img_rect.left;
             int img_h = img_rect.bottom - img_rect.top;
 
@@ -151,24 +153,24 @@ namespace
             switch(LOWORD(wParam)) {
 
             case IDC_CHECK_OVERLAY_ENABLE:
-                s.enabled = Button_GetCheck(GetDlgItem(dlg, IDC_CHECK_OVERLAY_ENABLE));
+                s.enabled = Button_GetCheck(Ctl(dlg, IDC_CHECK_OVERLAY_ENABLE));
                 break;
 
             case IDC_COMBO_FADEOUT_AFTER:
                 if(action == CBN_SELCHANGE) {
-                    s.fadeout_time = static_cast<byte>(ComboBox_GetCurSel(GetDlgItem(dlg, IDC_COMBO_FADEOUT_AFTER)));
+                    s.fadeout_time = static_cast<byte>(ComboBox_GetCurSel(Ctl(dlg, IDC_COMBO_FADEOUT_AFTER)));
                 }
                 break;
 
             case IDC_COMBO_FADEOUT_SPEED:
                 if(action == CBN_SELCHANGE) {
-                    s.fadeout_speed = static_cast<byte>(ComboBox_GetCurSel(GetDlgItem(dlg, IDC_COMBO_FADEOUT_SPEED)));
+                    s.fadeout_speed = static_cast<byte>(ComboBox_GetCurSel(Ctl(dlg, IDC_COMBO_FADEOUT_SPEED)));
                 }
                 break;
 
             case IDC_COMBO_FADEOUT_TO:
                 if(action == CBN_SELCHANGE) {
-                    s.fadeout_to = static_cast<byte>(ComboBox_GetCurSel(GetDlgItem(dlg, IDC_COMBO_FADEOUT_TO)));
+                    s.fadeout_to = static_cast<byte>(ComboBox_GetCurSel(Ctl(dlg, IDC_COMBO_FADEOUT_TO)));
                 }
                 break;
             }
@@ -183,26 +185,27 @@ namespace
 
     void update_hotkey_name(HWND dlg)
     {
-        std::string hotkey_name = chs::mic_muter::get_hotkey_name(hotkey_keycode, hotkey_modifiers);
-        std::string group_text = std::format("Hotkey is {}", hotkey_name);
-        SetWindowText(GetDlgItem(dlg, IDC_STATIC_HOTKEY_GROUP), group_text.c_str());
+        std::string hotkey_name = mic_muter::get_hotkey_name(hotkey_keycode, hotkey_modifiers);
+        std::string hotkey_text = std::format("Hotkey is {}", hotkey_name);
+        SetWindowText(Ctl(dlg, IDC_STATIC_HOTKEY_MESSAGE), hotkey_text.c_str());
     }
 
     //////////////////////////////////////////////////////////////////////
 
     void setup_controls(HWND dlg)
     {
-        Button_SetCheck(GetDlgItem(dlg, IDC_CHECK_RUN_AT_STARTUP), settings.run_at_startup);
-        int id = chs::mic_muter::get_hotkey_index(hotkey_keycode);
-        HWND hotkey_combo = GetDlgItem(dlg, IDC_COMBO_HOTKEY);
+        Button_SetCheck(Ctl(dlg, IDC_CHECK_RUN_AT_STARTUP), settings.run_at_startup);
+        int id = mic_muter::get_hotkey_index(hotkey_keycode);
+        HWND hotkey_combo = Ctl(dlg, IDC_COMBO_HOTKEY);
         if(id == -1) {
             id = ComboBox_GetCount(hotkey_combo) - 1;
         }
         ComboBox_SetCurSel(hotkey_combo, id);
-        Button_SetCheck(GetDlgItem(dlg, IDC_CHECK_ALT), (hotkey_modifiers & keymod_alt) != 0);
-        Button_SetCheck(GetDlgItem(dlg, IDC_CHECK_CTRL), (hotkey_modifiers & keymod_ctrl) != 0);
-        Button_SetCheck(GetDlgItem(dlg, IDC_CHECK_SHIFT), (hotkey_modifiers & keymod_shift) != 0);
-        Button_SetCheck(GetDlgItem(dlg, IDC_CHECK_WINKEY), (hotkey_modifiers & keymod_winkey) != 0);
+        Button_SetCheck(Ctl(dlg, IDC_CHECK_ALT), (hotkey_modifiers & keymod_alt) != 0);
+        Button_SetCheck(Ctl(dlg, IDC_CHECK_CTRL), (hotkey_modifiers & keymod_ctrl) != 0);
+        Button_SetCheck(Ctl(dlg, IDC_CHECK_SHIFT), (hotkey_modifiers & keymod_shift) != 0);
+        Button_SetCheck(Ctl(dlg, IDC_CHECK_WINKEY), (hotkey_modifiers & keymod_winkey) != 0);
+        update_hotkey_name(dlg);
     }
 
     //////////////////////////////////////////////////////////////////////
@@ -220,15 +223,13 @@ namespace
 
     void enable_hotkey_controls(HWND dlg, bool enable)
     {
-        int show = enable ? SW_HIDE : SW_SHOW;
         int hide = enable ? SW_SHOW : SW_HIDE;
-        ShowWindow(GetDlgItem(dlg, IDC_CHECK_ALT), hide);
-        ShowWindow(GetDlgItem(dlg, IDC_CHECK_CTRL), hide);
-        ShowWindow(GetDlgItem(dlg, IDC_CHECK_SHIFT), hide);
-        ShowWindow(GetDlgItem(dlg, IDC_CHECK_WINKEY), hide);
-        ShowWindow(GetDlgItem(dlg, IDC_COMBO_HOTKEY), hide);
-        ShowWindow(GetDlgItem(dlg, IDC_STATIC_HOTKEY_MESSAGE), show);
-        SetWindowText(GetDlgItem(dlg, IDC_BUTTON_CHOOSE_HOTKEY), enable ? "Scan" : "Cancel");
+        ShowWindow(Ctl(dlg, IDC_CHECK_ALT), hide);
+        ShowWindow(Ctl(dlg, IDC_CHECK_CTRL), hide);
+        ShowWindow(Ctl(dlg, IDC_CHECK_SHIFT), hide);
+        ShowWindow(Ctl(dlg, IDC_CHECK_WINKEY), hide);
+        ShowWindow(Ctl(dlg, IDC_COMBO_HOTKEY), hide);
+        SetWindowText(Ctl(dlg, IDC_BUTTON_CHOOSE_HOTKEY), enable ? "Scan" : "Cancel");
     }
 
     //////////////////////////////////////////////////////////////////////
@@ -245,7 +246,7 @@ namespace
             old_settings = settings;
 
             // init the tab control tabs' text
-            HWND tab_ctrl = GetDlgItem(dlg, IDC_OPTIONS_TAB_CTRL);
+            HWND tab_ctrl = Ctl(dlg, IDC_OPTIONS_TAB_CTRL);
             TCITEM tie{};
             tie.mask = TCIF_TEXT;
             for(int i = 0; i < mic_muter::num_overlay_ids; ++i) {
@@ -276,15 +277,14 @@ namespace
 
             CreateDialogIndirect(GetModuleHandle(nullptr), dlg_template, dlg, overlay_dlg_proc);
 
-            HWND combo = GetDlgItem(dlg, IDC_COMBO_HOTKEY);
-            for(int i = 0; i < chs::mic_muter::num_hotkeys; ++i) {
-                chs::mic_muter::hotkey_t &hotkey = chs::mic_muter::hotkeys[i];
+            HWND combo = Ctl(dlg, IDC_COMBO_HOTKEY);
+            for(int i = 0; i < mic_muter::num_hotkeys; ++i) {
+                mic_muter::hotkey_t &hotkey = mic_muter::hotkeys[i];
                 ComboBox_AddString(combo, hotkey.name);
             }
             ComboBox_AddString(combo, "Unknown Key");
 
             setup_controls(dlg);
-            update_hotkey_name(dlg);
 
             // show the requested overlay page
             TabCtrl_SetCurSel(tab_ctrl, lParam);
@@ -320,40 +320,40 @@ namespace
                 EndDialog(dlg, IDCANCEL);
                 break;
             case IDC_CHECK_RUN_AT_STARTUP:
-                settings.run_at_startup = Button_GetCheck(GetDlgItem(dlg, IDC_CHECK_RUN_AT_STARTUP)) != 0;
+                settings.run_at_startup = Button_GetCheck(Ctl(dlg, IDC_CHECK_RUN_AT_STARTUP)) != 0;
                 break;
             case IDC_BUTTON_CHOOSE_HOTKEY:
                 hotkey_scanning = !hotkey_scanning;
+                SetWindowText(Ctl(dlg, IDC_STATIC_HOTKEY_MESSAGE), "Press to set the hotkey...");
                 enable_hotkey_controls(dlg, !hotkey_scanning);
                 break;
             case IDC_COMBO_HOTKEY: {
                 if(HIWORD(wParam) == CBN_SELCHANGE) {
-                    HWND combo = GetDlgItem(dlg, IDC_COMBO_HOTKEY);
+                    HWND combo = Ctl(dlg, IDC_COMBO_HOTKEY);
                     int chose = ComboBox_GetCurSel(combo);
                     if(chose != (ComboBox_GetCount(combo) - 1)) {
-                        int id = std::clamp(chose, 0, static_cast<int>(chs::mic_muter::num_hotkeys));
-                        hotkey_keycode = chs::mic_muter::hotkeys[id].key_code;
+                        int id = std::clamp(chose, 0, static_cast<int>(mic_muter::num_hotkeys));
+                        hotkey_keycode = mic_muter::hotkeys[id].key_code;
                         LOG_DEBUG("NEW CODE: ID: {}, CODE: {}", id, hotkey_keycode);
                         setup_controls(dlg);
-                        update_hotkey_name(dlg);
                     }
                 }
                 break;
             }
             case IDC_CHECK_ALT:
-                update_modifiers(Button_GetCheck(GetDlgItem(dlg, IDC_CHECK_ALT)), keymod_alt);
+                update_modifiers(Button_GetCheck(Ctl(dlg, IDC_CHECK_ALT)), keymod_alt);
                 update_hotkey_name(dlg);
                 break;
             case IDC_CHECK_CTRL:
-                update_modifiers(Button_GetCheck(GetDlgItem(dlg, IDC_CHECK_CTRL)), keymod_ctrl);
+                update_modifiers(Button_GetCheck(Ctl(dlg, IDC_CHECK_CTRL)), keymod_ctrl);
                 update_hotkey_name(dlg);
                 break;
             case IDC_CHECK_SHIFT:
-                update_modifiers(Button_GetCheck(GetDlgItem(dlg, IDC_CHECK_SHIFT)), keymod_shift);
+                update_modifiers(Button_GetCheck(Ctl(dlg, IDC_CHECK_SHIFT)), keymod_shift);
                 update_hotkey_name(dlg);
                 break;
             case IDC_CHECK_WINKEY:
-                update_modifiers(Button_GetCheck(GetDlgItem(dlg, IDC_CHECK_WINKEY)), keymod_winkey);
+                update_modifiers(Button_GetCheck(Ctl(dlg, IDC_CHECK_WINKEY)), keymod_winkey);
                 update_hotkey_name(dlg);
                 break;
             }
@@ -362,7 +362,6 @@ namespace
         case WM_APP_HOTKEY_PRESSED:
             LOG_DEBUG("New hotkey: {:02x}, {:02x}", wParam, lParam);
             enable_hotkey_controls(dlg, true);
-            ShowWindow(GetDlgItem(dlg, IDC_STATIC_HOTKEY_MESSAGE), SW_HIDE);
             setup_controls(dlg);
             break;
 
@@ -371,7 +370,7 @@ namespace
             switch(n->idFrom) {
             case IDC_OPTIONS_TAB_CTRL:
                 if(n->code == static_cast<UINT>(TCN_SELCHANGE)) {
-                    HWND tab_ctrl = GetDlgItem(dlg, IDC_OPTIONS_TAB_CTRL);
+                    HWND tab_ctrl = Ctl(dlg, IDC_OPTIONS_TAB_CTRL);
                     int page = TabCtrl_GetCurSel(tab_ctrl);
                     LOG_DEBUG("page: {}", page);
                     dlg_info_t *info = dlg_info(dlg);
