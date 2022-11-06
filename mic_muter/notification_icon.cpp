@@ -70,6 +70,9 @@ namespace chs::mic_muter
         if(!Shell_NotifyIcon(NIM_DELETE, &nid)) {
             return WIN32_LAST_ERROR("Shell_NotifyIcon(NIM_DELETE)");
         }
+        for(auto &ico : icon) {
+            DestroyIcon(ico);
+        }
         return S_OK;
     }
 }
