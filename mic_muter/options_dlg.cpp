@@ -185,9 +185,13 @@ namespace
 
     void update_hotkey_name(HWND dlg)
     {
-        std::string hotkey_name = mic_muter::get_hotkey_name(hotkey_keycode, hotkey_modifiers);
-        std::string hotkey_text = std::format("Hotkey is {}", hotkey_name);
-        SetWindowText(Ctl(dlg, IDC_STATIC_HOTKEY_MESSAGE), hotkey_text.c_str());
+        if(hotkey_scanning) {
+            SetWindowText(Ctl(dlg, IDC_STATIC_HOTKEY_MESSAGE), "Press to set the hotkey...");
+        } else {
+            std::string hotkey_name = mic_muter::get_hotkey_name(hotkey_keycode, hotkey_modifiers);
+            std::string hotkey_text = std::format("Hotkey is {}", hotkey_name);
+            SetWindowText(Ctl(dlg, IDC_STATIC_HOTKEY_MESSAGE), hotkey_text.c_str());
+        }
     }
 
     //////////////////////////////////////////////////////////////////////
@@ -324,7 +328,7 @@ namespace
                 break;
             case IDC_BUTTON_CHOOSE_HOTKEY:
                 hotkey_scanning = !hotkey_scanning;
-                SetWindowText(Ctl(dlg, IDC_STATIC_HOTKEY_MESSAGE), "Press to set the hotkey...");
+                update_hotkey_name(dlg);
                 enable_hotkey_controls(dlg, !hotkey_scanning);
                 break;
             case IDC_COMBO_HOTKEY: {
