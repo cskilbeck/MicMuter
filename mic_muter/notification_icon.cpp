@@ -25,6 +25,8 @@ namespace
 #endif
 
 #endif
+
+    HICON icon[chs::mic_muter::num_overlay_ids];
 }
 
 namespace chs::mic_muter
