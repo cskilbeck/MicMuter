@@ -592,7 +592,7 @@ namespace
 
         case WM_DRAWITEM: {
             auto di = reinterpret_cast<LPDRAWITEMSTRUCT>(lParam);
-            if(di->itemID == ID_POPUP_MICMUTER) {
+            if(di->itemID == ID_POPUP_MICMUTER && di->itemAction == ODA_DRAWENTIRE) {
                 char const *txt = reinterpret_cast<char const *>(di->itemData);
                 int len = static_cast<int>(strlen(txt));
                 HFONT old_font = SelectFont(di->hDC, menu_banner_font);
