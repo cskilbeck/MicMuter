@@ -457,9 +457,10 @@ namespace
             } else {
                 rc = settings.overlay_position;
                 overlay_size = rc.right - rc.left;
-                hotkey_modifiers = settings.modifiers;
-                hotkey_keycode = settings.hotkey;
             }
+
+            hotkey_modifiers = settings.modifiers;
+            hotkey_keycode = settings.hotkey;
 
             SetWindowPos(hWnd, HWND_TOPMOST, rc.left, rc.top, overlay_size, overlay_size, 0);
 
@@ -551,12 +552,11 @@ namespace
             }
             break;
 
-        case WM_APP_SHOW_OVERLAY: {
+        case WM_APP_SHOW_OVERLAY:
             audio->get_mic_info(&mic_attached, &mic_muted);
             notify_icon.update(mic_attached, mic_muted);
             do_fadeout();
             break;
-        }
 
         case WM_APP_ENDPOINT_CHANGE:
             audio->change_endpoint();
