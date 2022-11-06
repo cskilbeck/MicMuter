@@ -7,7 +7,7 @@ namespace chs::mic_muter
     //  This detaches from the endpoint and releases all audio service references.
     // ----------------------------------------------------------------------
 
-    void audio_controller::Dispose()
+    void audio_controller::close()
     {
         detach_from_endpoint();
 
@@ -122,19 +122,6 @@ namespace chs::mic_muter
     }
 
     // ----------------------------------------------------------------------
-    //  IMMNotificationClient::OnDeviceStateChanged
-    // ----------------------------------------------------------------------
-
-    HRESULT audio_controller::OnDeviceStateChanged(LPCWSTR pwstrDeviceId, DWORD dwNewState)
-    {
-        if(pwstrDeviceId == nullptr) {
-            return S_OK;
-        }
-        LOG_DEBUG(L"OnDeviceStateChanged to {}: {}", dwNewState, pwstrDeviceId);
-        return S_OK;
-    }
-
-    // ----------------------------------------------------------------------
     //  Implementation of IMMNotificationClient::OnDefaultDeviceChanged
     //
     //  When the user changes the default output device we want to stop monitoring the
@@ -143,31 +130,9 @@ namespace chs::mic_muter
 
     HRESULT audio_controller::OnDefaultDeviceChanged(EDataFlow flow, ERole role, LPCWSTR pwstrDeviceId)
     {
-        if(pwstrDeviceId == nullptr) {
-            pwstrDeviceId = L"NULL";
-        }
-        LOG_DEBUG(L"OnDefaultDeviceChanged: {}", pwstrDeviceId);
         if(flow == eCapture && role == eCommunications && overlay_hwnd != nullptr) {
             PostMessage(overlay_hwnd, WM_APP_ENDPOINT_CHANGE, 0, 0);
         }
-        return S_OK;
-    }
-
-    // ----------------------------------------------------------------------
-    // IMMNotificationClient::OnDeviceAdded
-    // ----------------------------------------------------------------------
-
-    HRESULT audio_controller::OnDeviceAdded(LPCWSTR pwstrDeviceId)
-    {
-        return S_OK;
-    }
-
-    // ----------------------------------------------------------------------
-    // IMMNotificationClient::OnDeviceRemoved
-    // ----------------------------------------------------------------------
-
-    HRESULT audio_controller::OnDeviceRemoved(LPCWSTR pwstrDeviceId)
-    {
         return S_OK;
     }
 

@@ -497,7 +497,7 @@ namespace
                 img.destroy();
             }
             BufferedPaintUnInit();
-            audio->Dispose();
+            audio->close();
             audio.Reset();
             settings.save();
             PostQuitMessage(0);

@@ -40,9 +40,21 @@ namespace chs::mic_muter
             return S_OK;
         }
 
-        IFACEMETHODIMP OnDeviceStateChanged(LPCWSTR pwstrDeviceId, DWORD dwNewState);
-        IFACEMETHODIMP OnDeviceAdded(LPCWSTR pwstrDeviceId);
-        IFACEMETHODIMP OnDeviceRemoved(LPCWSTR pwstrDeviceId);
+        IFACEMETHODIMP OnDeviceAdded(LPCWSTR pwstrDeviceId)
+        {
+            return S_OK;
+        }
+
+        IFACEMETHODIMP OnDeviceRemoved(LPCWSTR pwstrDeviceId)
+        {
+            return S_OK;
+        }
+
+        IFACEMETHODIMP OnDeviceStateChanged(LPCWSTR pwstrDeviceId, DWORD dwNewState)
+        {
+            return S_OK;
+        }
+
         IFACEMETHODIMP OnDefaultDeviceChanged(EDataFlow flow, ERole role, LPCWSTR pwstrDefaultDeviceId);
         IFACEMETHODIMP OnNotify(PAUDIO_VOLUME_NOTIFICATION_DATA pNotify);
         IFACEMETHODIMP QueryInterface(REFIID iid, void **ppUnk);
@@ -51,7 +63,7 @@ namespace chs::mic_muter
         audio_controller() = default;
 
         HRESULT init();
-        void Dispose();
+        void close();
         void change_endpoint();
 
         HRESULT get_mic_info(bool *present, bool *muted);
