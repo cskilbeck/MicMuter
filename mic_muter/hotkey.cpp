@@ -164,13 +164,13 @@ namespace chs::mic_muter
             result.append("Shift ");
         }
         if(modifiers & keymod_winkey) {
-            result.append("WinKey ");
+            result.append("Win ");
         }
         int index = get_hotkey_index(keycode);
         if(index >= 0) {
-            result.append(std::format("+ {}", hotkeys[index].name));
+            result.append(hotkeys[index].name);
         } else {
-            result.append(std::format("+ KEY_0x{:02x}", keycode));
+            result.append(std::format("0x{:02X}", keycode));
         }
         return result;
     }

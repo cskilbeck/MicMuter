@@ -443,11 +443,18 @@ namespace
             RECT rc;
 
             if(FAILED(settings.load())) {
+
+                // default overlay size is this many percent of default monitor width
+                int constexpr default_size_percent = 15;
+
+                // default overlay position is bottom right inset by this % of overlay size
+                int constexpr default_offset_percent = 15;
+
                 HMONITOR hMonitor = MonitorFromPoint({ 0, 0 }, MONITOR_DEFAULTTOPRIMARY);
                 MONITORINFO mi = { sizeof(mi) };
                 GetMonitorInfo(hMonitor, &mi);
-                overlay_size = (mi.rcMonitor.right - mi.rcMonitor.left) * 15 / 100;
-                int offset = (overlay_size * 115) / 100;
+                overlay_size = (mi.rcMonitor.right - mi.rcMonitor.left) * default_size_percent / 100;
+                int offset = overlay_size * (100 + default_offset_percent) / 100;
                 POINT const pt = { mi.rcMonitor.right - offset, mi.rcMonitor.bottom - offset };
                 rc = { pt.x, pt.y, pt.x + overlay_size, pt.y + overlay_size };
             } else {
@@ -517,11 +524,11 @@ namespace
                 break;
 
             case TIMER_ID_FADE: {
-                auto *s = &settings.overlay[mic_muter::get_overlay_id(mic_muted, mic_attached)];
+                auto &s = settings.overlay[mic_muter::get_overlay_id(mic_muted, mic_attached)];
                 uint64 now = GetTickCount64();
                 float elapsed = static_cast<float>(now - fade_ticks);
-                float duration = static_cast<float>(settings_t::fadeout_over_ms[s->fadeout_speed]);
-                int target_alpha = settings_t::fadeout_to_alpha[s->fadeout_to];
+                float duration = static_cast<float>(settings_t::fadeout_over_ms[s.fadeout_speed]);
+                int target_alpha = settings_t::fadeout_to_alpha[s.fadeout_to];
                 int alpha_range = 255 - target_alpha;
                 float d = std::min(1.0f, elapsed / duration);
                 int window_alpha = 255 - static_cast<int>(d * alpha_range);
@@ -665,7 +672,7 @@ namespace
         DEFER(CloseHandle(single_instance_mutex));
 
         if(GetLastError() == ERROR_ALREADY_EXISTS) {
-            HWND hwnd = FindWindow(drag_window_class_name, mic_muter::app_name);
+            HWND hwnd = FindWindow(overlay_window_class_name, mic_muter::app_name);
             if(hwnd != nullptr) {
                 PostMessage(hwnd, WM_APP_SHOW_OVERLAY, 0, 0);
             }

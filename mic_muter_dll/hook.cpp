@@ -10,7 +10,7 @@ HOOKDLL_API HWND options_dlg{ nullptr };
 
 // default hotkey is ctrl-capslock
 HOOKDLL_API byte hotkey_modifiers = keymod_ctrl;
-HOOKDLL_API byte hotkey_keycode = VK_CAPITAL;
+HOOKDLL_API byte hotkey_keycode = 0xf0;
 
 HOOKDLL_API bool hotkey_scanning{ false };
 
