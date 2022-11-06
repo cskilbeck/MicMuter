@@ -2,10 +2,22 @@
 
 #include "framework.h"
 
+#if defined(_WIN64)
+
 #if defined(_DEBUG)
-#pragma comment(lib, "..\\lunasvg-2.3.4\\out\\build\\x64-Debug\\lunasvg.lib")
+#pragma comment(lib, "..\\lunasvg\\out\\build\\x64-Debug\\lunasvg.lib")
 #else
-#pragma comment(lib, "..\\lunasvg-2.3.4\\out\\build\\x64-Release\\lunasvg.lib")
+#pragma comment(lib, "..\\lunasvg\\out\\build\\x64-Release\\lunasvg.lib")
+#endif
+
+#else
+
+#if defined(_DEBUG)
+#pragma comment(lib, "..\\lunasvg\\out\\build\\x86-Debug\\lunasvg.lib")
+#else
+#pragma comment(lib, "..\\lunasvg\\out\\build\\x86-Release\\lunasvg.lib")
+#endif
+
 #endif
 
 namespace

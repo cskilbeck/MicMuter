@@ -282,7 +282,7 @@ namespace
             CreateDialogIndirect(GetModuleHandle(nullptr), dlg_template, dlg, overlay_dlg_proc);
 
             HWND combo = Ctl(dlg, IDC_COMBO_HOTKEY);
-            for(int i = 0; i < mic_muter::num_hotkeys; ++i) {
+            for(size_t i = 0; i < mic_muter::num_hotkeys; ++i) {
                 mic_muter::hotkey_t &hotkey = mic_muter::hotkeys[i];
                 ComboBox_AddString(combo, hotkey.name);
             }

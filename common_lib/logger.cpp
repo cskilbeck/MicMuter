@@ -25,7 +25,7 @@ namespace chs::logger
     {
         INIT_ONCE init_once = INIT_ONCE_STATIC_INIT;
 
-        BOOL init_console(PINIT_ONCE, PVOID, PVOID *)
+        BOOL WINAPI init_console(PINIT_ONCE, PVOID, PVOID *)
         {
             AllocConsole();
             FILE *fpstdin = stdin;

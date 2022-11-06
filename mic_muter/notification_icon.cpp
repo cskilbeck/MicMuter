@@ -8,10 +8,22 @@ namespace
 
     LOG_CONTEXT("icon");
 
+#if defined(_WIN64)
+
 #if defined(_DEBUG)
     class __declspec(uuid("CC2EC94D-B8E2-4FF5-9C4C-41DCD4AC8D87")) icon_guid;
 #else
     class __declspec(uuid("8312E0D8-5CB0-4799-B13F-B52B8AE6F61E")) icon_guid;
+#endif
+
+#else
+
+#if defined(_DEBUG)
+    class __declspec(uuid("428CA1C5-4EDD-4584-BCB4-559ACA5EF861")) icon_guid;
+#else
+    class __declspec(uuid("2B08A2EA-33B9-4DDD-A163-8208799ED9C4")) icon_guid;
+#endif
+
 #endif
 }
 

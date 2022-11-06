@@ -18,20 +18,34 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "common_lib", "common_lib\co
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
 		Debug|x64 = Debug|x64
+		Release|Win32 = Release|Win32
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{4E2A0630-2E2A-4DF9-9132-579F91F05899}.Debug|Win32.ActiveCfg = Debug|Win32
+		{4E2A0630-2E2A-4DF9-9132-579F91F05899}.Debug|Win32.Build.0 = Debug|Win32
 		{4E2A0630-2E2A-4DF9-9132-579F91F05899}.Debug|x64.ActiveCfg = Debug|x64
 		{4E2A0630-2E2A-4DF9-9132-579F91F05899}.Debug|x64.Build.0 = Debug|x64
+		{4E2A0630-2E2A-4DF9-9132-579F91F05899}.Release|Win32.ActiveCfg = Release|Win32
+		{4E2A0630-2E2A-4DF9-9132-579F91F05899}.Release|Win32.Build.0 = Release|Win32
 		{4E2A0630-2E2A-4DF9-9132-579F91F05899}.Release|x64.ActiveCfg = Release|x64
 		{4E2A0630-2E2A-4DF9-9132-579F91F05899}.Release|x64.Build.0 = Release|x64
+		{1596A0B4-E47D-4FF7-8042-56BD6BFDDB9C}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1596A0B4-E47D-4FF7-8042-56BD6BFDDB9C}.Debug|Win32.Build.0 = Debug|Win32
 		{1596A0B4-E47D-4FF7-8042-56BD6BFDDB9C}.Debug|x64.ActiveCfg = Debug|x64
 		{1596A0B4-E47D-4FF7-8042-56BD6BFDDB9C}.Debug|x64.Build.0 = Debug|x64
+		{1596A0B4-E47D-4FF7-8042-56BD6BFDDB9C}.Release|Win32.ActiveCfg = Release|Win32
+		{1596A0B4-E47D-4FF7-8042-56BD6BFDDB9C}.Release|Win32.Build.0 = Release|Win32
 		{1596A0B4-E47D-4FF7-8042-56BD6BFDDB9C}.Release|x64.ActiveCfg = Release|x64
 		{1596A0B4-E47D-4FF7-8042-56BD6BFDDB9C}.Release|x64.Build.0 = Release|x64
+		{2CB943B3-4D95-4CD3-9115-31C90EDF9557}.Debug|Win32.ActiveCfg = Debug|Win32
+		{2CB943B3-4D95-4CD3-9115-31C90EDF9557}.Debug|Win32.Build.0 = Debug|Win32
 		{2CB943B3-4D95-4CD3-9115-31C90EDF9557}.Debug|x64.ActiveCfg = Debug|x64
 		{2CB943B3-4D95-4CD3-9115-31C90EDF9557}.Debug|x64.Build.0 = Debug|x64
+		{2CB943B3-4D95-4CD3-9115-31C90EDF9557}.Release|Win32.ActiveCfg = Release|Win32
+		{2CB943B3-4D95-4CD3-9115-31C90EDF9557}.Release|Win32.Build.0 = Release|Win32
 		{2CB943B3-4D95-4CD3-9115-31C90EDF9557}.Release|x64.ActiveCfg = Release|x64
 		{2CB943B3-4D95-4CD3-9115-31C90EDF9557}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection

@@ -1,9 +1,11 @@
 cmake_minimum_required(VERSION 3.3)
 
-project(lunasvg VERSION 2.3.3 LANGUAGES CXX C)
+# cmake MSVC_RUNTIME_LIBRARY chicken bones
+if(POLICY CMP0091)
+  cmake_policy(SET CMP0091 NEW)
+endif()
 
-set(CMAKE_CXX_FLAGS_RELEASE "/MT")
-set(CMAKE_CXX_FLAGS_DEBUG "/MTd")
+project(lunasvg VERSION 2.3.5 LANGUAGES CXX C)
 
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_C_STANDARD 11)
@@ -15,7 +17,6 @@ add_library(lunasvg)
 
 add_subdirectory(include)
 add_subdirectory(source)
-add_subdirectory(3rdparty/software)
 add_subdirectory(3rdparty/plutovg)
 
 if(BUILD_SHARED_LIBS)
@@ -29,6 +30,8 @@ endif()
 
 set(LUNASVG_LIBDIR ${CMAKE_INSTALL_PREFIX}/lib)
 set(LUNASVG_INCDIR ${CMAKE_INSTALL_PREFIX}/include)
+
+set_property(TARGET lunasvg PROPERTY MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
 install(FILES
     include/lunasvg.h

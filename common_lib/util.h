@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../lunasvg-2.3.4/include/lunasvg.h"
+#include "../lunasvg/include/lunasvg.h"
 
 namespace chs
 {

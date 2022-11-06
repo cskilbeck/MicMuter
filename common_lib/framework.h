@@ -23,5 +23,5 @@
 
 #include "ansi.h"
 #include "logger.h"
-#include "../lunasvg-2.3.4/include/lunasvg.h"
+#include "../lunasvg/include/lunasvg.h"
 #include "util.h"
