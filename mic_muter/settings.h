@@ -110,7 +110,7 @@ namespace chs::mic_muter
 
         bool run_at_startup{ true };
 
-        byte hotkey{ 0xF0 };
+        byte hotkey{ VK_CAPITAL };
         byte modifiers{ keymod_ctrl };
 
         HRESULT save_run_at_startup();
