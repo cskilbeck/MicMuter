@@ -230,8 +230,7 @@ namespace
         }
 
         update_layered_window(255);
-        ShowWindow(overlay_hwnd, SW_SHOW);
-        BringWindowToTop(overlay_hwnd);
+        ShowWindow(overlay_hwnd, SW_SHOWNOACTIVATE);
 
         int fade_after = settings_t::fadeout_after_ms[overlay_setting.fadeout_time];
 
@@ -286,11 +285,9 @@ namespace
         reload_images();
 
         // new window position
-        RECT window_rect;
-        GetWindowRect(drag_hwnd, &window_rect);
-        SetWindowPos(overlay_hwnd, nullptr, window_rect.left, window_rect.top, overlay_size, overlay_size,
-                     SWP_SHOWWINDOW);
-
+        RECT newpos;
+        GetWindowRect(drag_hwnd, &newpos);
+        SetWindowPos(overlay_hwnd, nullptr, newpos.left, newpos.top, overlay_size, overlay_size, SWP_NOACTIVATE);
         do_fadeout();
     }
 
