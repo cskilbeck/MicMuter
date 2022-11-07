@@ -216,7 +216,31 @@ namespace
 
     //////////////////////////////////////////////////////////////////////
 
-    void do_fadeout()
+    void start_fadeout()
+    {
+        int overlay_id = mic_muter::get_overlay_id(mic_muted, mic_attached);
+        settings_t::overlay_setting const &overlay_setting = settings.overlay[overlay_id];
+
+        int fade_time = settings_t::fadeout_over_ms[overlay_setting.fadeout_speed];
+
+        ShowWindow(overlay_hwnd, SW_SHOWNOACTIVATE);
+
+        if(fade_time != 0) {
+            fade_ticks = GetTickCount64();
+            SetTimer(overlay_hwnd, TIMER_ID_FADE, 16, nullptr);
+        } else {
+            int target_alpha = settings_t::fadeout_to_alpha[overlay_setting.fadeout_to];
+            if(target_alpha > 1) {
+                update_layered_window(target_alpha);
+            } else {
+                ShowWindow(overlay_hwnd, SW_HIDE);
+            }
+        }
+    }
+
+    //////////////////////////////////////////////////////////////////////
+
+    void show_overlay()
     {
         KillTimer(overlay_hwnd, TIMER_ID_WAIT);
         KillTimer(overlay_hwnd, TIMER_ID_FADE);
@@ -229,16 +253,14 @@ namespace
             return;
         }
 
-        update_layered_window(255);
-        ShowWindow(overlay_hwnd, SW_SHOWNOACTIVATE);
-
         int fade_after = settings_t::fadeout_after_ms[overlay_setting.fadeout_time];
 
         if(fade_after > 0) {
+            update_layered_window(255);
+            ShowWindow(overlay_hwnd, SW_SHOWNOACTIVATE);
             SetTimer(overlay_hwnd, TIMER_ID_WAIT, fade_after, nullptr);
         } else if(fade_after == 0) {
-            fade_ticks = GetTickCount64();
-            SetTimer(overlay_hwnd, TIMER_ID_FADE, 16, nullptr);
+            start_fadeout();
         }
     }
 
@@ -288,7 +310,7 @@ namespace
         RECT newpos;
         GetWindowRect(drag_hwnd, &newpos);
         SetWindowPos(overlay_hwnd, nullptr, newpos.left, newpos.top, overlay_size, overlay_size, SWP_NOACTIVATE);
-        do_fadeout();
+        show_overlay();
     }
 
     //////////////////////////////////////////////////////////////////////
@@ -511,14 +533,12 @@ namespace
             switch(wParam) {
 
             case TIMER_ID_DRAG:
-                KillTimer(overlay_hwnd, TIMER_ID_DRAG);
                 stop_move_overlay();
                 break;
 
             case TIMER_ID_WAIT:
                 KillTimer(hWnd, TIMER_ID_WAIT);
-                fade_ticks = GetTickCount64();
-                SetTimer(hWnd, TIMER_ID_FADE, 16, nullptr);
+                start_fadeout();
                 break;
 
             case TIMER_ID_FADE: {
@@ -555,7 +575,7 @@ namespace
         case WM_APP_SHOW_OVERLAY:
             audio->get_mic_info(&mic_attached, &mic_muted);
             notify_icon.update(mic_attached, mic_muted);
-            do_fadeout();
+            show_overlay();
             break;
 
         case WM_APP_ENDPOINT_CHANGE:
