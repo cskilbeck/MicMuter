@@ -255,12 +255,14 @@ namespace
 
         int fade_after = settings_t::fadeout_after_ms[overlay_setting.fadeout_time];
 
-        if(fade_after > 0) {
+        if(fade_after == 0) {
+            start_fadeout();
+        } else {
             update_layered_window(255);
             ShowWindow(overlay_hwnd, SW_SHOWNOACTIVATE);
-            SetTimer(overlay_hwnd, TIMER_ID_WAIT, fade_after, nullptr);
-        } else if(fade_after == 0) {
-            start_fadeout();
+            if(fade_after > 0) {
+                SetTimer(overlay_hwnd, TIMER_ID_WAIT, fade_after, nullptr);
+            }
         }
     }
 
@@ -584,7 +586,9 @@ namespace
             break;
 
         case WM_APP_HOTKEY_PRESSED:
-            audio->toggle_mute();
+            if(FAILED(audio->toggle_mute())) {
+                show_overlay();
+            }
             break;
 
         case WM_APP_QUIT_PLEASE:
