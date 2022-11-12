@@ -1,13 +1,30 @@
 //////////////////////////////////////////////////////////////////////
+// To reset Notification Area Icon Cache, delete all the non-default keys in
+// HKEY_CURRENT_USER\SOFTWARE\Classes\Local Settings\Software\Microsoft\Windows\CurrentVersion\TrayNotify
+// and restart Windows Explorer
+
+// Note: You must build lunasvg before MicMuter - File\Open\CMake -> lunasvg\CMakeLists.txt
+// Be sure to choose the same platform/configuration (e.g. x64/Release etc) as you're using
+// for MicMuter. Alternatively, build them all (x86/x64, Debug/Release) and you're done.
+
+// Git changes don't play nice with UTF-16 files (mic_muter.rc). There's an option in git
+// to translate to UTF-8 and back but I had problems with BOM so... tough luck
+
+//
 
 #include "framework.h"
 
 //////////////////////////////////////////////////////////////////////
 
+namespace
+{
+    // these must line up with enum overlay_id in mic_muter.h
+
+    char const *overlay_names[chs::mic_muter::num_overlay_ids] = { "Muted", "Unmuted", "Disconnected" };
+}
+
 namespace chs::mic_muter
 {
-    static char const *overlay_names[num_overlay_ids] = { "Muted", "Unmuted", "Disconnected" };
-
     int get_overlay_id(bool muted, bool attached)
     {
         int index = overlay_id_disconnected;
@@ -361,10 +378,6 @@ namespace
             break;
         }
 
-        case WM_CREATE:
-            drag_hwnd = hWnd;
-            break;
-
         case WM_MOVING:
             SetTimer(overlay_hwnd, TIMER_ID_DRAG, drag_idle_stop_seconds * 1000, nullptr);
             break;
@@ -447,21 +460,37 @@ namespace
     }
 
     //////////////////////////////////////////////////////////////////////
+    // only call this from WM_CREATE, which returns -1 to indicate
+    // that the CreateWindow call should fail
+
+    LRESULT msg_bomb(char const *msg, DWORD err)
+    {
+        std::string str{ std::format("Error: {}\r\nCode: {:08x}\r\n{}", msg, err, chs::util::windows_error_text(err)) };
+        MessageBox(nullptr, str.c_str(), "MicMuter", MB_ICONEXCLAMATION);
+        return -1;
+    }
+
+    //////////////////////////////////////////////////////////////////////
+
+    HRESULT save_settings(HWND hwnd)
+    {
+        RECT rc;
+        GetClientRect(hwnd, &rc);
+        MapWindowPoints(hwnd, nullptr, reinterpret_cast<LPPOINT>(&rc), 2);
+        settings.overlay_position = rc;
+        return settings.save();
+    }
+
+    //////////////////////////////////////////////////////////////////////
 
     LRESULT CALLBACK overlay_wnd_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
         switch(message) {
 
-        case WM_GETMINMAXINFO: {
-            MINMAXINFO *mmi = reinterpret_cast<MINMAXINFO *>(lParam);
-            mmi->ptMinTrackSize.x = GetSystemMetrics(SM_CXSIZEFRAME) * 8;
-            mmi->ptMinTrackSize.y = GetSystemMetrics(SM_CYSIZEFRAME) * 8;
-            break;
-        }
-
         case WM_CREATE: {
 
             RECT rc;
+            HRESULT hr;
 
             if(FAILED(settings.load())) {
 
@@ -488,24 +517,43 @@ namespace
 
             SetWindowPos(hWnd, HWND_TOPMOST, rc.left, rc.top, overlay_size, overlay_size, 0);
 
-            overlay_hwnd = hWnd;
-
-            settings.save();
-
             audio.Attach(new(std::nothrow) audio_controller());
 
             hotkey_hook = SetWindowsHookEx(WH_KEYBOARD_LL, mic_mute_hook_function, GetModuleHandle(nullptr), 0);
+            if(hotkey_hook == nullptr) {
+                return msg_bomb("Can't register hotkey!?", GetLastError());
+            }
 
-            audio->init();
+            if(FAILED(hr = audio->init())) {
+                return msg_bomb("Can't register audio device monitor!?", hr);
+            }
 
-            audio->get_mic_info(&mic_attached, &mic_muted);
+            // this fails if microphone is disconnected, that's ok
+            if(FAILED(hr = audio->refresh_endpoint()) && hr != HRESULT_FROM_WIN32(ERROR_NOT_FOUND)) {
+                return msg_bomb("Can't register audio device endpoint callback", hr);
+            }
 
-            notify_icon.load();
-            notify_icon.update(mic_attached, mic_muted);
+            if(FAILED(hr = audio->get_mic_info(&mic_attached, &mic_muted))) {
+                return msg_bomb("Can't get microphone info!?", hr);
+            }
 
-            reload_images();
+            if(FAILED(hr = save_settings(hWnd))) {
+                return msg_bomb("Can't save settings!?", hr);
+            }
 
-            create_menu_banner_font();
+            if(FAILED(hr = notify_icon.load(hWnd))) {
+                return msg_bomb("Can't setup notification icon!?", hr);
+            }
+
+            notify_icon.update(hWnd, mic_attached, mic_muted);
+
+            if(FAILED(hr = reload_images())) {
+                return msg_bomb("Can't load overlay images!?", hr);
+            }
+
+            if(FAILED(hr = create_menu_banner_font())) {
+                return msg_bomb("Can't create menu banner font!?", hr);
+            }
 
             PostMessage(hWnd, WM_APP_SHOW_OVERLAY, 0, 0);
             break;
@@ -514,7 +562,7 @@ namespace
         case WM_DESTROY:
             DestroyWindow(drag_hwnd);
             drag_hwnd = nullptr;
-            notify_icon.destroy();
+            notify_icon.destroy(hWnd);
             UnhookWindowsHookEx(hotkey_hook);
             hotkey_hook = nullptr;
             for(auto &img : overlay_image) {
@@ -576,12 +624,12 @@ namespace
 
         case WM_APP_SHOW_OVERLAY:
             audio->get_mic_info(&mic_attached, &mic_muted);
-            notify_icon.update(mic_attached, mic_muted);
+            notify_icon.update(hWnd, mic_attached, mic_muted);
             show_overlay();
             break;
 
         case WM_APP_ENDPOINT_CHANGE:
-            audio->change_endpoint();
+            audio->refresh_endpoint();
             PostMessage(overlay_hwnd, WM_APP_SHOW_OVERLAY, 0, 0);
             break;
 
@@ -628,9 +676,9 @@ namespace
         default:
             if(message == WM_TASKBARCREATED) {
                 LOG_INFO("WM_TASKBARCREATED!");
-                notify_icon.destroy();
-                notify_icon.load();
-                notify_icon.update(mic_attached, mic_muted);
+                notify_icon.destroy(hWnd);
+                notify_icon.load(hWnd);
+                notify_icon.update(hWnd, mic_attached, mic_muted);
             } else {
                 return DefWindowProc(hWnd, message, wParam, lParam);
             }
@@ -663,15 +711,16 @@ namespace
             return WIN32_LAST_ERROR("RegisterClassEx(drag)");
         }
 
-        CreateWindowEx(overlay_window_ex_flags, overlay_window_class_name, mic_muter::app_name, overlay_window_flags, 0,
-                       0, 0, 0, nullptr, nullptr, GetModuleHandle(nullptr), nullptr);
+        overlay_hwnd =
+            CreateWindowEx(overlay_window_ex_flags, overlay_window_class_name, mic_muter::app_name,
+                           overlay_window_flags, 0, 0, 0, 0, nullptr, nullptr, GetModuleHandle(nullptr), nullptr);
 
         if(overlay_hwnd == nullptr) {
             return WIN32_LAST_ERROR("CreateWindowEx(overlay)");
         }
 
-        CreateWindowEx(drag_window_ex_flags, drag_window_class_name, mic_muter::app_name, drag_window_flags, 0, 0, 0, 0,
-                       nullptr, nullptr, GetModuleHandle(nullptr), nullptr);
+        drag_hwnd = CreateWindowEx(drag_window_ex_flags, drag_window_class_name, mic_muter::app_name, drag_window_flags,
+                                   0, 0, 0, 0, nullptr, nullptr, GetModuleHandle(nullptr), nullptr);
 
         if(drag_hwnd == nullptr) {
             return WIN32_LAST_ERROR("CreateWindowEx(drag)");

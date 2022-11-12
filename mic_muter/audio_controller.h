@@ -64,7 +64,7 @@ namespace chs::mic_muter
 
         HRESULT init();
         void close();
-        void change_endpoint();
+        HRESULT refresh_endpoint();
 
         HRESULT get_mic_info(bool *present, bool *muted);
 

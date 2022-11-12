@@ -33,7 +33,7 @@ namespace chs::mic_muter
 {
     //////////////////////////////////////////////////////////////////////
 
-    HRESULT notification_icon::load()
+    HRESULT notification_icon::load(HWND hwnd)
     {
         int w = GetSystemMetrics(SM_CXSMICON);
         int h = GetSystemMetrics(SM_CYSMICON);
@@ -43,7 +43,7 @@ namespace chs::mic_muter
         HR(chs::util::svg_to_icon(svg::microphone_disconnected_svg, w, h, &icon[overlay_id_disconnected]));
 
         NOTIFYICONDATA nid = { sizeof(nid) };
-        nid.hWnd = overlay_hwnd;
+        nid.hWnd = hwnd;
         nid.uFlags = NIF_GUID | NIF_MESSAGE;
         nid.guidItem = __uuidof(icon_guid);
         nid.uCallbackMessage = WM_APP_NOTIFICATION_ICON;
@@ -60,10 +60,10 @@ namespace chs::mic_muter
 
     //////////////////////////////////////////////////////////////////////
 
-    HRESULT notification_icon::update(bool attached, bool muted)
+    HRESULT notification_icon::update(HWND hwnd, bool attached, bool muted)
     {
         NOTIFYICONDATA nid = { sizeof(nid) };
-        nid.hWnd = overlay_hwnd;
+        nid.hWnd = hwnd;
         nid.hIcon = icon[get_overlay_id(muted, attached)];
         nid.uFlags = NIF_ICON | NIF_GUID;
         nid.guidItem = __uuidof(icon_guid);
@@ -75,10 +75,10 @@ namespace chs::mic_muter
 
     //////////////////////////////////////////////////////////////////////
 
-    HRESULT notification_icon::destroy()
+    HRESULT notification_icon::destroy(HWND hwnd)
     {
         NOTIFYICONDATA nid = { sizeof(nid) };
-        nid.hWnd = overlay_hwnd;
+        nid.hWnd = hwnd;
         nid.uFlags = NIF_GUID | NIF_MESSAGE;
         nid.uCallbackMessage = WM_APP_NOTIFICATION_ICON;
         nid.guidItem = __uuidof(icon_guid);

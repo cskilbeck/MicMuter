@@ -29,7 +29,6 @@ namespace chs::mic_muter
         HR(CoCreateInstance(__uuidof(MMDeviceEnumerator), nullptr, CLSCTX_INPROC_SERVER, __uuidof(IMMDeviceEnumerator),
                             reinterpret_cast<LPVOID *>(enumerator.GetAddressOf())));
         HR(enumerator->RegisterEndpointNotificationCallback(this));
-        HR(attach_to_default_endpoint());
         return S_OK;
     }
 
@@ -115,10 +114,11 @@ namespace chs::mic_muter
     //  Call this from the UI thread when the default device changes
     // ----------------------------------------------------------------------
 
-    void audio_controller::change_endpoint()
+    HRESULT audio_controller::refresh_endpoint()
     {
         detach_from_endpoint();
-        attach_to_default_endpoint();
+        HR(attach_to_default_endpoint());
+        return S_OK;
     }
 
     // ----------------------------------------------------------------------

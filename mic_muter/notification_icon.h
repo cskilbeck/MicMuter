@@ -4,8 +4,8 @@ namespace chs::mic_muter
 {
     struct notification_icon
     {
-        HRESULT load();
-        HRESULT update(bool attached, bool muted);
-        HRESULT destroy();
+        HRESULT load(HWND hwnd);
+        HRESULT update(HWND hwnd, bool attached, bool muted);
+        HRESULT destroy(HWND hwnd);
     };
 }

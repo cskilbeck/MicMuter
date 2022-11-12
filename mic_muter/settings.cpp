@@ -17,11 +17,6 @@ namespace chs::mic_muter
 
     HRESULT settings_t::save()
     {
-        RECT rc;
-        GetClientRect(overlay_hwnd, &rc);
-        MapWindowPoints(overlay_hwnd, nullptr, reinterpret_cast<LPPOINT>(&rc), 2);
-        overlay_position = rc;
-
         SETTINGS_SAVE_VALUE(run_at_startup);
         SETTINGS_SAVE_VALUE(overlay_position);
         SETTINGS_SAVE_VALUE(hotkey);
