@@ -35,11 +35,12 @@ namespace chs::mic_muter
 
     HRESULT notification_icon::load()
     {
-        HMODULE m = GetModuleHandle(nullptr);
+        int w = GetSystemMetrics(SM_CXSMICON);
+        int h = GetSystemMetrics(SM_CYSMICON);
 
-        HR(LoadIconMetric(m, MAKEINTRESOURCEW(IDI_ICON_MIC_MUTE), LIM_SMALL, &icon[overlay_id_muted]));
-        HR(LoadIconMetric(m, MAKEINTRESOURCEW(IDI_ICON_MIC_NORMAL), LIM_SMALL, &icon[overlay_id_unmuted]));
-        HR(LoadIconMetric(m, MAKEINTRESOURCEW(IDI_ICON_MIC_MISSING), LIM_SMALL, &icon[overlay_id_disconnected]));
+        HR(chs::util::svg_to_icon(svg::microphone_mute_svg, w, h, &icon[overlay_id_muted]));
+        HR(chs::util::svg_to_icon(svg::microphone_normal_svg, w, h, &icon[overlay_id_unmuted]));
+        HR(chs::util::svg_to_icon(svg::microphone_disconnected_svg, w, h, &icon[overlay_id_disconnected]));
 
         NOTIFYICONDATA nid = { sizeof(nid) };
         nid.hWnd = overlay_hwnd;

@@ -4,21 +4,26 @@
 
 //////////////////////////////////////////////////////////////////////
 
+namespace chs::mic_muter::svg
+{
+#include "images/header/microphone_mute_svg.h"
+#include "images/header/microphone_normal_svg.h"
+#include "images/header/microphone_disconnected_svg.h"
+}
+
+//////////////////////////////////////////////////////////////////////
+
 namespace
 {
-
-#include "images/microphone_mute_svg.h"
-#include "images/microphone_normal_svg.h"
-#include "images/microphone_base_svg.h"
-
-    char const *overlay_svg[chs::mic_muter::num_overlay_ids] = { microphone_mute_svg, microphone_normal_svg,
-                                                                 microphone_base_svg };
+    char const *overlay_svg[chs::mic_muter::num_overlay_ids] = { chs::mic_muter::svg::microphone_mute_svg,
+                                                                 chs::mic_muter::svg::microphone_normal_svg,
+                                                                 chs::mic_muter::svg::microphone_disconnected_svg };
 }
+
+//////////////////////////////////////////////////////////////////////
 
 namespace chs::mic_muter
 {
-    //////////////////////////////////////////////////////////////////////
-
     HRESULT image::create_from_svg(char const *svg, int w, int h)
     {
         destroy();

@@ -2,6 +2,13 @@
 
 //////////////////////////////////////////////////////////////////////
 
+namespace chs::mic_muter::svg
+{
+    extern char const *microphone_mute_svg;
+    extern char const *microphone_normal_svg;
+    extern char const *microphone_disconnected_svg;
+}
+
 namespace chs::mic_muter
 {
     char const *get_overlay_svg(overlay_id id);

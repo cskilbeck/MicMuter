@@ -22,6 +22,7 @@ namespace chs
         HRESULT load_bitmap(uintptr_t const id, HBITMAP *bmp, uint32 width = 0, uint32 height = 0);
 
         HRESULT svg_to_bitmap(char const *svg, int width, int height, HBITMAP *bmp);
+        HRESULT svg_to_icon(char const *svg, int width, int height, HICON *icon);
 
         bool console_set_ansi_enabled(bool const enabled);
         std::string windows_error_text(DWORD err);

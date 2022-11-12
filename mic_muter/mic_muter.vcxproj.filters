@@ -76,23 +76,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="small.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="images\microphone_mute.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="mic_muter.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="images\microphone_missing.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-    <Image Include="images\microphone_normal.ico">
-      <Filter>Resource Files</Filter>
-    </Image>
-  </ItemGroup>
-  <ItemGroup>
     <ResourceCompile Include="mic_muter.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
@@ -104,8 +87,13 @@
     <CustomBuild Include="images\microphone_normal.svg">
       <Filter>SVG</Filter>
     </CustomBuild>
-    <CustomBuild Include="images\microphone_base.svg">
+    <CustomBuild Include="images\microphone_disconnected.svg">
       <Filter>SVG</Filter>
     </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="mic_muter.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

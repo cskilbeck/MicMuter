@@ -87,6 +87,8 @@ namespace
 
     HRESULT load_image(std::vector<byte> const &src, uint32 const width, uint32 const height, HBITMAP *bmp)
     {
+        LOG_CONTEXT("load_image");
+
         if(src.empty()) {
             return E_INVALIDARG;
         }
@@ -279,6 +281,8 @@ namespace chs::util
 
     HRESULT svg_to_bitmap(char const *svg, int width, int height, HBITMAP *bmp)
     {
+        LOG_CONTEXT("svg_to_bitmap");
+
         auto document = lunasvg::Document::loadFromData(svg);
         if(document.get() == nullptr) {
             return E_FAIL;
@@ -322,6 +326,36 @@ namespace chs::util
         if(*bmp == nullptr) {
             return WIN32_LAST_ERROR("CreateDIBitmap");
         }
+
+        return S_OK;
+    }
+
+    //////////////////////////////////////////////////////////////////////
+
+    HRESULT svg_to_icon(char const *svg, int width, int height, HICON *icon)
+    {
+        LOG_CONTEXT("svg_to_icon");
+
+        HBITMAP color_bmp;
+        HR(svg_to_bitmap(svg, width, height, &color_bmp));
+        DEFER(DeleteObject(static_cast<HGDIOBJ>(color_bmp)));
+
+        HBITMAP mask_bmp = CreateBitmap(width, height, 1, 1, nullptr);
+        if(mask_bmp == nullptr) {
+            return WIN32_LAST_ERROR("CreateBitmap");
+        }
+        DEFER(DeleteObject(mask_bmp));
+
+        ICONINFO icon_info = {
+            .fIcon = true, .xHotspot = 0, .yHotspot = 0, .hbmMask = mask_bmp, .hbmColor = color_bmp
+        };
+
+        HICON new_icon = CreateIconIndirect(&icon_info);
+        if(new_icon == nullptr) {
+            return WIN32_LAST_ERROR("CreateIconIndirect");
+        }
+
+        *icon = new_icon;
 
         return S_OK;
     }
