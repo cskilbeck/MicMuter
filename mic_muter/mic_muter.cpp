@@ -240,7 +240,7 @@ namespace
 
         int fade_time = settings_t::fadeout_over_ms[overlay_setting.fadeout_speed];
 
-        ShowWindow(overlay_hwnd, SW_SHOWNOACTIVATE);
+        SetWindowPos(overlay_hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW | SWP_NOACTIVATE);
 
         if(fade_time != 0) {
             fade_ticks = GetTickCount64();
@@ -276,7 +276,8 @@ namespace
             start_fadeout();
         } else {
             update_layered_window(255);
-            ShowWindow(overlay_hwnd, SW_SHOWNOACTIVATE);
+            SetWindowPos(overlay_hwnd, HWND_TOPMOST, 0, 0, 0, 0,
+                         SWP_NOMOVE | SWP_NOSIZE | SWP_SHOWWINDOW | SWP_NOACTIVATE);
             if(fade_after > 0) {
                 SetTimer(overlay_hwnd, TIMER_ID_WAIT, fade_after, nullptr);
             }
@@ -284,7 +285,7 @@ namespace
     }
 
     //////////////////////////////////////////////////////////////////////
-    // Make the overlay window draggable/sizeable
+    // hide the translucent overlay window, show the draggable one
 
     void start_move_overlay()
     {
@@ -301,7 +302,7 @@ namespace
 
         ShowWindow(overlay_hwnd, SW_HIDE);
 
-        SetWindowPos(drag_hwnd, nullptr, client_rect.left, client_rect.top, width, height, SWP_SHOWWINDOW);
+        SetWindowPos(drag_hwnd, HWND_TOPMOST, client_rect.left, client_rect.top, width, height, SWP_SHOWWINDOW);
         InvalidateRect(drag_hwnd, nullptr, true);
         SetActiveWindow(drag_hwnd);
         SetForegroundWindow(drag_hwnd);
@@ -309,7 +310,7 @@ namespace
     }
 
     //////////////////////////////////////////////////////////////////////
-    // finished dragging/sizing the overlay window, make it overlayish again
+    // finished dragging/sizing, put the overlay back
 
     void stop_move_overlay()
     {
@@ -317,17 +318,18 @@ namespace
 
         ShowWindow(drag_hwnd, SW_HIDE);
 
+        // new window position
+        RECT newpos;
+        GetWindowRect(drag_hwnd, &newpos);
+
         // get final size
-        RECT client_rect;
-        GetClientRect(drag_hwnd, &client_rect);
-        overlay_size = client_rect.right - client_rect.left;
+        overlay_size = newpos.right - newpos.left;
+        settings.overlay_position = newpos;
 
         // make new correctly sized images
         reload_images();
 
-        // new window position
-        RECT newpos;
-        GetWindowRect(drag_hwnd, &newpos);
+        // just set the position, don't show it yet
         SetWindowPos(overlay_hwnd, nullptr, newpos.left, newpos.top, overlay_size, overlay_size, SWP_NOACTIVATE);
         show_overlay();
     }
