@@ -474,17 +474,6 @@ namespace
 
     //////////////////////////////////////////////////////////////////////
 
-    HRESULT save_settings(HWND hwnd)
-    {
-        RECT rc;
-        GetClientRect(hwnd, &rc);
-        MapWindowPoints(hwnd, nullptr, reinterpret_cast<LPPOINT>(&rc), 2);
-        settings.overlay_position = rc;
-        return settings.save();
-    }
-
-    //////////////////////////////////////////////////////////////////////
-
     LRESULT CALLBACK overlay_wnd_proc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam)
     {
         switch(message) {
@@ -539,7 +528,7 @@ namespace
                 return msg_bomb("Can't get microphone info!?", hr);
             }
 
-            if(FAILED(hr = save_settings(hWnd))) {
+            if(FAILED(hr = settings.save())) {
                 return msg_bomb("Can't save settings!?", hr);
             }
 
@@ -547,7 +536,9 @@ namespace
                 return msg_bomb("Can't setup notification icon!?", hr);
             }
 
-            notify_icon.update(hWnd, mic_attached, mic_muted);
+            if(FAILED(hr = notify_icon.update(hWnd, mic_attached, mic_muted))) {
+                return msg_bomb("Can't update notification icon!?", hr);
+            }
 
             if(FAILED(hr = reload_images())) {
                 return msg_bomb("Can't load overlay images!?", hr);
