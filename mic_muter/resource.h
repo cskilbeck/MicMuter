@@ -29,6 +29,7 @@
 #define IDC_STATIC_OVERLAY_POS          1012
 #define IDC_CHECK_RUN_AT_STARTUP        1013
 #define IDC_SLIDER1                     1022
+#define IDC_SLIDER_FADE_TO              1022
 #define IDC_COMBO_FADEOUT_AFTER         1023
 #define IDC_COMBO_FADEOUT_TO            1024
 #define IDC_COMBO_FADEOUT_SPEED         1025
@@ -44,6 +45,7 @@
 #define IDC_CHECK_WINKEY                1050
 #define IDC_STATIC_HOTKEY_MESSAGE       1051
 #define IDC_STATIC_HOTKEY_GROUP         1052
+#define IDC_STATIC_FADE_TO_PERCENT      1053
 #define ID_POPUP_QUIT                   32771
 #define ID_POPUP_ETC                    32772
 #define ID_POPUP_OPTIONS                32773
@@ -108,7 +110,7 @@
 #define _APS_NO_MFC                     1
 #define _APS_NEXT_RESOURCE_VALUE        143
 #define _APS_NEXT_COMMAND_VALUE         32837
-#define _APS_NEXT_CONTROL_VALUE         1053
+#define _APS_NEXT_CONTROL_VALUE         1055
 #define _APS_NEXT_SYMED_VALUE           112
 #endif
 #endif

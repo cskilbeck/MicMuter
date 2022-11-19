@@ -246,7 +246,7 @@ namespace
             fade_ticks = GetTickCount64();
             SetTimer(overlay_hwnd, TIMER_ID_FADE, 16, nullptr);
         } else {
-            int target_alpha = settings_t::fadeout_to_alpha[overlay_setting.fadeout_to];
+            int target_alpha = overlay_setting.fadeout_to * 255 / 20;
             if(target_alpha > 1) {
                 update_layered_window(target_alpha);
             } else {
@@ -483,12 +483,12 @@ namespace
             RECT rc;
             HRESULT hr;
 
-            if(FAILED(settings.load())) {
+            if(FAILED(settings.load()) || util::rect_is_empty(settings.overlay_position)) {
 
                 // default overlay size is this many percent of default monitor width
                 int constexpr default_size_percent = 15;
 
-                // default overlay position is bottom right inset by this % of overlay size
+                // default overlay position is bottom right with margin this % of overlay size
                 int constexpr default_offset_percent = 15;
 
                 HMONITOR hMonitor = MonitorFromPoint({ 0, 0 }, MONITOR_DEFAULTTOPRIMARY);
@@ -589,7 +589,7 @@ namespace
                 uint64 now = GetTickCount64();
                 float elapsed = static_cast<float>(now - fade_ticks);
                 float duration = static_cast<float>(settings_t::fadeout_over_ms[s.fadeout_speed]);
-                int target_alpha = settings_t::fadeout_to_alpha[s.fadeout_to];
+                int target_alpha = s.fadeout_to * 255 / 20;
                 int alpha_range = 255 - target_alpha;
                 float d = std::min(1.0f, elapsed / duration);
                 int window_alpha = 255 - static_cast<int>(d * alpha_range);

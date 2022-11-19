@@ -21,6 +21,9 @@ namespace
 
     auto constexpr Ctl = GetDlgItem;
 
+    HWND tooltip;
+    TOOLINFO toolInfo = { 0 };
+
     //////////////////////////////////////////////////////////////////////
 
     dlg_info_t *dlg_info(HWND w)
@@ -38,8 +41,39 @@ namespace
 
         enable &= s.fadeout_time != settings_t::fadeout_after::fadeout_never;
 
-        EnableWindow(Ctl(w, IDC_COMBO_FADEOUT_TO), enable);
         EnableWindow(Ctl(w, IDC_COMBO_FADEOUT_SPEED), enable);
+        EnableWindow(Ctl(w, IDC_SLIDER_FADE_TO), enable);
+
+        InvalidateRect(Ctl(w, IDC_STATIC_OPTIONS_OVERLAY_IMAGE), nullptr, false);
+    }
+
+    //////////////////////////////////////////////////////////////////////
+
+    void update_percent_str(HWND w, settings_t::overlay_setting const &s)
+    {
+        std::string percent_str{ "Hidden" };
+        if(s.fadeout_to != 0) {
+            percent_str = std::format("{}%", s.fadeout_to * 100 / 20);
+        }
+        toolInfo.lpszText = const_cast<char *>(percent_str.c_str());
+        SendMessage(tooltip, TTM_UPDATETIPTEXT, 0, reinterpret_cast<WPARAM>(&toolInfo));
+        LRESULT size = SendMessage(tooltip, TTM_GETBUBBLESIZE, 0, reinterpret_cast<WPARAM>(&toolInfo));
+        int height = size >> 16;
+        int width = size & 0xffff;
+
+        HWND slider = Ctl(w, IDC_SLIDER_FADE_TO);
+
+        RECT win_rect;
+        GetWindowRect(slider, &win_rect);
+
+        RECT track_rect;
+        SendMessage(slider, TBM_GETTHUMBRECT, 0, reinterpret_cast<LPARAM>(&track_rect));
+
+        MapWindowPoints(slider, nullptr, reinterpret_cast<LPPOINT>(&track_rect), 2);
+
+        uint32 y = track_rect.top - height * 140 / 100;
+        uint32 x = track_rect.left + (track_rect.right - track_rect.left) / 2 - width / 2;
+        SendMessage(tooltip, TTM_TRACKPOSITION, 0, (y << 16) | x);
     }
 
     //////////////////////////////////////////////////////////////////////
@@ -48,10 +82,9 @@ namespace
     {
         Button_SetCheck(Ctl(w, IDC_CHECK_OVERLAY_ENABLE), s.enabled);
         ComboBox_SetCurSel(Ctl(w, IDC_COMBO_FADEOUT_AFTER), s.fadeout_time);
-        ComboBox_SetCurSel(Ctl(w, IDC_COMBO_FADEOUT_TO), s.fadeout_to);
         ComboBox_SetCurSel(Ctl(w, IDC_COMBO_FADEOUT_SPEED), s.fadeout_speed);
+        SendMessage(Ctl(w, IDC_SLIDER_FADE_TO), TBM_SETPOS, TRUE, s.fadeout_to);
         enable_option_controls(w, s);
-        InvalidateRect(Ctl(w, IDC_STATIC_OPTIONS_OVERLAY_IMAGE), nullptr, false);
     }
 
     //////////////////////////////////////////////////////////////////////
@@ -60,6 +93,18 @@ namespace
     {
         switch(message) {
         case WM_INITDIALOG: {
+
+            // create tooltip for slider
+            tooltip = CreateWindowEx(0, TOOLTIPS_CLASS, nullptr, WS_POPUP | TTS_ALWAYSTIP, 0, 0, 0, 0, dlg, nullptr,
+                                     GetModuleHandle(nullptr), nullptr);
+
+            toolInfo.cbSize = sizeof(toolInfo);
+            toolInfo.hwnd = dlg;
+            toolInfo.uFlags = TTF_IDISHWND | TTF_TRACK | TTF_ABSOLUTE;
+            toolInfo.uId = (UINT_PTR)Ctl(dlg, IDC_SLIDER_FADE_TO);
+            toolInfo.lpszText = const_cast<char *>("HELLO");
+            GetClientRect(dlg, &toolInfo.rect);
+            SendMessage(tooltip, TTM_ADDTOOL, 0, (LPARAM)&toolInfo);
 
             // fill in main dialog info block
 
@@ -77,13 +122,18 @@ namespace
             SetWindowPos(dlg, nullptr, rc.left, rc.top, 0, 0, SWP_NOZORDER | SWP_SHOWWINDOW | SWP_NOSIZE);
             EnableThemeDialogTexture(dlg, ETDT_ENABLETAB);
 
+            // setup the trackbar
+
+            HWND trackbar = Ctl(dlg, IDC_SLIDER_FADE_TO);
+            SendMessage(trackbar, TBM_SETRANGE, 0, (19 << 16) | 0);
+            SendMessage(trackbar, TBM_SETTICFREQ, 1, 0);
+            SendMessage(trackbar, TBM_SETLINESIZE, 0, 1);
+            SendMessage(trackbar, TBM_SETPAGESIZE, 0, 5);
+
             // add strings to the combo boxes
 
             for(auto const *text : settings_t::fadeout_after_names) {
                 ComboBox_AddString(Ctl(dlg, IDC_COMBO_FADEOUT_AFTER), text);
-            }
-            for(auto const *text : settings_t::fadeout_to_names) {
-                ComboBox_AddString(Ctl(dlg, IDC_COMBO_FADEOUT_TO), text);
             }
             for(auto const *text : settings_t::fadeout_speed_names) {
                 ComboBox_AddString(Ctl(dlg, IDC_COMBO_FADEOUT_SPEED), text);
@@ -114,6 +164,42 @@ namespace
             }
             break;
 
+        case WM_HSCROLL: {
+            HWND slider = Ctl(dlg, IDC_SLIDER_FADE_TO);
+            auto code = LOWORD(wParam);
+            if(lParam == reinterpret_cast<LPARAM>(slider) && code != SB_ENDSCROLL && code != SB_THUMBPOSITION) {
+
+                LRESULT pos = SendMessage(slider, TBM_GETPOS, 0, 0);
+                dlg_info_t *info = dlg_info(GetParent(dlg));
+                settings_t::overlay_setting &s = settings.overlay[info->page];
+
+                s.fadeout_to = static_cast<byte>(pos);
+                InvalidateRect(Ctl(dlg, IDC_STATIC_OPTIONS_OVERLAY_IMAGE), nullptr, false);
+
+                SendMessage(tooltip, TTM_TRACKACTIVATE, TRUE, reinterpret_cast<LPARAM>(&toolInfo));
+                update_percent_str(dlg, s);
+
+                if(code != SB_THUMBTRACK) {
+                    SetTimer(dlg, 100, 500, nullptr);
+                    break;
+                }
+            }
+            break;
+        }
+
+        case WM_NOTIFY: {
+            LPNMHDR nmhdr = reinterpret_cast<LPNMHDR>(lParam);
+            if(wParam == IDC_SLIDER_FADE_TO && nmhdr->code == NM_RELEASEDCAPTURE) {
+                SetTimer(dlg, 100, 500, nullptr);
+            }
+            break;
+        }
+
+        case WM_TIMER:
+            KillTimer(dlg, 100);
+            SendMessage(tooltip, TTM_TRACKACTIVATE, FALSE, reinterpret_cast<LPARAM>(&toolInfo));
+            break;
+
         case WM_DRAWITEM: {
 
             LPDRAWITEMSTRUCT d = reinterpret_cast<LPDRAWITEMSTRUCT>(lParam);
@@ -121,6 +207,9 @@ namespace
             switch(d->CtlID) {
 
             case IDC_STATIC_OPTIONS_OVERLAY_IMAGE: {
+
+                dlg_info_t *info = dlg_info(GetParent(dlg));
+                settings_t::overlay_setting &s = settings.overlay[info->page];
 
                 HDC dc = GetDC(dlg);
                 HBRUSH fill_brush = CreateSolidBrush(GetBkColor(dc));
@@ -132,10 +221,13 @@ namespace
 
                 BLENDFUNCTION bf{};
                 bf.BlendOp = AC_SRC_OVER;
-                bf.SourceConstantAlpha = 255;
+                bf.SourceConstantAlpha = static_cast<BYTE>(s.fadeout_to * 255 / 20);
                 bf.AlphaFormat = AC_SRC_ALPHA;
 
-                dlg_info_t *info = dlg_info(GetParent(dlg));
+                if(s.fadeout_time == settings_t::fadeout_never) {
+                    bf.SourceConstantAlpha = 255;
+                }
+
                 int w = overlay_img[info->page].width;
                 int h = overlay_img[info->page].height;
                 HDC src_dc = overlay_img[info->page].dc;
@@ -154,27 +246,25 @@ namespace
 
             case IDC_CHECK_OVERLAY_ENABLE:
                 s.enabled = Button_GetCheck(Ctl(dlg, IDC_CHECK_OVERLAY_ENABLE));
+                enable_option_controls(dlg, s);
                 break;
 
             case IDC_COMBO_FADEOUT_AFTER:
                 if(action == CBN_SELCHANGE) {
                     s.fadeout_time = static_cast<byte>(ComboBox_GetCurSel(Ctl(dlg, IDC_COMBO_FADEOUT_AFTER)));
+                    enable_option_controls(dlg, s);
                 }
                 break;
 
             case IDC_COMBO_FADEOUT_SPEED:
                 if(action == CBN_SELCHANGE) {
                     s.fadeout_speed = static_cast<byte>(ComboBox_GetCurSel(Ctl(dlg, IDC_COMBO_FADEOUT_SPEED)));
+                    enable_option_controls(dlg, s);
                 }
                 break;
-
-            case IDC_COMBO_FADEOUT_TO:
-                if(action == CBN_SELCHANGE) {
-                    s.fadeout_to = static_cast<byte>(ComboBox_GetCurSel(Ctl(dlg, IDC_COMBO_FADEOUT_TO)));
-                }
+            default:
                 break;
             }
-            enable_option_controls(dlg, s);
             break;
         }
         }

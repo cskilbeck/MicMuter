@@ -24,6 +24,8 @@ namespace chs
         HRESULT svg_to_bitmap(char const *svg, int width, int height, HBITMAP *bmp);
         HRESULT svg_to_icon(char const *svg, int width, int height, HICON *icon);
 
+        bool rect_is_empty(RECT const &r);
+
         bool console_set_ansi_enabled(bool const enabled);
         std::string windows_error_text(DWORD err);
 

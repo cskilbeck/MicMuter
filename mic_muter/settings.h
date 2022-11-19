@@ -40,26 +40,6 @@ namespace chs::mic_muter
             "Never"
         };
 
-        // fade out to this alpha
-        enum fadeout_to : byte
-        {
-            fadeout_to_invisible = 0,
-            fadeout_to_25_percent = 1,
-            fadeout_to_50_percent = 2
-        };
-
-        static constexpr int fadeout_to_alpha[]{
-            0,
-            96,
-            150
-        };
-
-        static constexpr char const *fadeout_to_names[]{
-            "Invisible",
-            "25%",
-            "50%"
-        };
-
         // fade out this quickly
         enum fadeout_speed : byte
         {
@@ -96,15 +76,13 @@ namespace chs::mic_muter
             // take this many seconds to fade to final_opacity
             byte fadeout_speed;
 
-            // fade to this opacity
+            // fade to this opacity (0..19 = 0..95%) (* 255 / 20)
             byte fadeout_to;
         };
 
-        overlay_setting overlay[num_overlay_ids]{
-            { true, fadeout_after_5_seconds, fadeout_speed_slow, fadeout_to_50_percent },
-            { true, fadeout_after_1_second, fadeout_speed_fast, fadeout_to_25_percent },
-            { true, fadeout_after_0_seconds, fadeout_speed_medium, fadeout_to_invisible }
-        };
+        overlay_setting overlay[num_overlay_ids]{ { true, fadeout_after_1_second, fadeout_speed_slow, 4 },
+                                                  { true, fadeout_after_5_seconds, fadeout_speed_fast, 4 },
+                                                  { true, fadeout_after_0_seconds, fadeout_speed_medium, 8 } };
 
         RECT overlay_position;
 

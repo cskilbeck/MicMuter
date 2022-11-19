@@ -344,6 +344,13 @@ namespace chs::util
 
     //////////////////////////////////////////////////////////////////////
 
+    bool rect_is_empty(RECT const &r)
+    {
+        return r.left == r.right || r.top == r.bottom;
+    }
+
+    //////////////////////////////////////////////////////////////////////
+
     std::string windows_error_text(DWORD const err)
     {
         char *buffer = nullptr;
