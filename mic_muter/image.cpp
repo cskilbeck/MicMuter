@@ -9,6 +9,10 @@ namespace chs::mic_muter::svg
 #include "images/header/microphone_mute_svg.h"
 #include "images/header/microphone_normal_svg.h"
 #include "images/header/microphone_disconnected_svg.h"
+
+#include "images/header/microphone_mute_small_svg.h"
+#include "images/header/microphone_normal_small_svg.h"
+#include "images/header/microphone_disconnected_small_svg.h"
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -18,6 +22,11 @@ namespace
     char const *overlay_svg[chs::mic_muter::num_overlay_ids] = { chs::mic_muter::svg::microphone_mute_svg,
                                                                  chs::mic_muter::svg::microphone_normal_svg,
                                                                  chs::mic_muter::svg::microphone_disconnected_svg };
+
+    char const *overlay_svg_small[chs::mic_muter::num_overlay_ids] = {
+        chs::mic_muter::svg::microphone_mute_small_svg, chs::mic_muter::svg::microphone_normal_small_svg,
+        chs::mic_muter::svg::microphone_disconnected_small_svg
+    };
 }
 
 //////////////////////////////////////////////////////////////////////
@@ -60,5 +69,13 @@ namespace chs::mic_muter
     {
         int index = std::clamp(static_cast<int>(id), 0, max_overlay_id);
         return overlay_svg[index];
+    }
+
+    //////////////////////////////////////////////////////////////////////
+
+    char const *get_small_overlay_svg(overlay_id id)
+    {
+        int index = std::clamp(static_cast<int>(id), 0, max_overlay_id);
+        return overlay_svg_small[index];
     }
 }

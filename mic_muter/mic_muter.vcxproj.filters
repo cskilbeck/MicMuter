@@ -90,6 +90,15 @@
     <CustomBuild Include="images\microphone_disconnected.svg">
       <Filter>SVG</Filter>
     </CustomBuild>
+    <CustomBuild Include="images\microphone_disconnected_small.svg">
+      <Filter>SVG</Filter>
+    </CustomBuild>
+    <CustomBuild Include="images\microphone_mute_small.svg">
+      <Filter>SVG</Filter>
+    </CustomBuild>
+    <CustomBuild Include="images\microphone_normal_small.svg">
+      <Filter>SVG</Filter>
+    </CustomBuild>
   </ItemGroup>
   <ItemGroup>
     <Image Include="mic_muter.ico">

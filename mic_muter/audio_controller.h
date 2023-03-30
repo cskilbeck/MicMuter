@@ -4,8 +4,6 @@ namespace chs::mic_muter
 {
     class audio_controller : IMMNotificationClient, IAudioEndpointVolumeCallback
     {
-        LOG_CONTEXT("audio");
-
         bool endpoint_registered{ false };
         bool volume_registered{ false };
         ComPtr<IMMDeviceEnumerator> enumerator;

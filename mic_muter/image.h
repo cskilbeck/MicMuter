@@ -7,11 +7,16 @@ namespace chs::mic_muter::svg
     extern char const *microphone_mute_svg;
     extern char const *microphone_normal_svg;
     extern char const *microphone_disconnected_svg;
+
+    extern char const *microphone_mute_small_svg;
+    extern char const *microphone_normal_small_svg;
+    extern char const *microphone_disconnected_small_svg;
 }
 
 namespace chs::mic_muter
 {
     char const *get_overlay_svg(overlay_id id);
+    char const *get_small_overlay_svg(overlay_id id);
 
     struct image
     {
