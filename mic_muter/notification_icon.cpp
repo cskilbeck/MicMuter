@@ -38,9 +38,9 @@ namespace chs::mic_muter
         int w = GetSystemMetrics(SM_CXSMICON);
         int h = GetSystemMetrics(SM_CYSMICON);
 
-        HR(chs::util::svg_to_icon(svg::microphone_mute_svg, w, h, &icon[overlay_id_muted]));
-        HR(chs::util::svg_to_icon(svg::microphone_normal_svg, w, h, &icon[overlay_id_unmuted]));
-        HR(chs::util::svg_to_icon(svg::microphone_disconnected_svg, w, h, &icon[overlay_id_disconnected]));
+        HR(chs::util::svg_to_icon(svg::microphone_mute_small_svg, w, h, &icon[overlay_id_muted]));
+        HR(chs::util::svg_to_icon(svg::microphone_normal_small_svg, w, h, &icon[overlay_id_unmuted]));
+        HR(chs::util::svg_to_icon(svg::microphone_disconnected_small_svg, w, h, &icon[overlay_id_disconnected]));
 
         NOTIFYICONDATA nid = { sizeof(nid) };
         nid.hWnd = hwnd;
@@ -65,8 +65,17 @@ namespace chs::mic_muter
         NOTIFYICONDATA nid = { sizeof(nid) };
         nid.hWnd = hwnd;
         nid.hIcon = icon[get_overlay_id(muted, attached)];
-        nid.uFlags = NIF_ICON | NIF_GUID;
+        nid.uFlags = NIF_ICON | NIF_GUID | NIF_TIP | NIF_SHOWTIP;
         nid.guidItem = __uuidof(icon_guid);
+        char const *msg;
+        if(!attached) {
+            msg = "Microphone is disconnected";
+        } else if(muted) {
+            msg = "Microphone is muted";
+        } else {
+            msg = "Microphone is not muted";
+        }
+        strncpy_s(nid.szTip, msg, _countof(nid.szTip));
         if(!Shell_NotifyIcon(NIM_MODIFY, &nid)) {
             return WIN32_LAST_ERROR("Shell_NotifyIcon(NIM_MODIFY)");
         }
@@ -79,8 +88,7 @@ namespace chs::mic_muter
     {
         NOTIFYICONDATA nid = { sizeof(nid) };
         nid.hWnd = hwnd;
-        nid.uFlags = NIF_GUID | NIF_MESSAGE;
-        nid.uCallbackMessage = WM_APP_NOTIFICATION_ICON;
+        nid.uFlags = NIF_GUID;
         nid.guidItem = __uuidof(icon_guid);
         if(!Shell_NotifyIcon(NIM_DELETE, &nid)) {
             return WIN32_LAST_ERROR("Shell_NotifyIcon(NIM_DELETE)");

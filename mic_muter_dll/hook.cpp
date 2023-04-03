@@ -67,7 +67,7 @@ HOOKDLL_API LRESULT CALLBACK mic_mute_hook_function(int nCode, WPARAM wParam, LP
             break;
 
         default:
-            LOG_DEBUG("PRESS: {}, KEY: 0x{:02x}, MOD: {:08x}", press, keycode, modifiers);
+            // LOG_DEBUG("PRESS: {}, KEY: 0x{:02x}, MOD: {:08x}", press, keycode, modifiers);
             if(press) {
                 if(hotkey_scanning) {
                     hotkey_scanning = false;

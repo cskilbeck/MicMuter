@@ -1,10 +1,12 @@
 #pragma once
 
+#include "../common_lib/logger.h"
+
 namespace chs::mic_muter
 {
     class audio_controller : IMMNotificationClient, IAudioEndpointVolumeCallback
     {
-        LOG_CONTEXT("audio");
+        LOG_CONTEXT("audio_controller");
 
         bool endpoint_registered{ false };
         bool volume_registered{ false };
@@ -20,38 +22,41 @@ namespace chs::mic_muter
         HRESULT attach_to_default_endpoint();
         void detach_from_endpoint();
 
-        IFACEMETHODIMP OnPropertyValueChanged(LPCWSTR, const PROPERTYKEY)
-        {
-            return S_OK;
-        }
+        IFACEMETHODIMP OnPropertyValueChanged(LPCWSTR name, const PROPERTYKEY property_key);
 
         IFACEMETHODIMP OnDeviceQueryRemove()
         {
+            LOG_INFO("OnDeviceQueryRemove");
             return S_OK;
         }
 
         IFACEMETHODIMP OnDeviceQueryRemoveFailed()
         {
+            LOG_INFO("OnDeviceQueryRemoveFailed");
             return S_OK;
         }
 
         IFACEMETHODIMP OnDeviceRemovePending()
         {
+            LOG_INFO("OnDeviceRemovePending");
             return S_OK;
         }
 
         IFACEMETHODIMP OnDeviceAdded(LPCWSTR pwstrDeviceId)
         {
+            LOG_INFO("OnDeviceAdded");
             return S_OK;
         }
 
         IFACEMETHODIMP OnDeviceRemoved(LPCWSTR pwstrDeviceId)
         {
+            LOG_INFO("OnDeviceRemoved");
             return S_OK;
         }
 
         IFACEMETHODIMP OnDeviceStateChanged(LPCWSTR pwstrDeviceId, DWORD dwNewState)
         {
+            LOG_INFO(L"OnDeviceStateChanged: {} -> {}", pwstrDeviceId, dwNewState);
             return S_OK;
         }
 

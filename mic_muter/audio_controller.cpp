@@ -1,4 +1,12 @@
 #include "framework.h"
+#include "PropVarUtil.h"
+
+#pragma comment(lib, "Propsys.lib")
+
+namespace
+{
+    LOG_CONTEXT("audio");
+}
 
 namespace chs::mic_muter
 {
@@ -78,11 +86,93 @@ namespace chs::mic_muter
     //  Start monitoring the current default input audio device
     // ----------------------------------------------------------------------
 
+    // formfactor names culled from mmdeviceapi.h, enum __MIDL___MIDL_itf_mmdeviceapi_0000_0000_0003
+
+    wchar_t const *formfactor_names[] = { L"RemoteNetworkDevice",
+                                          L"Speakers",
+                                          L"LineLevel",
+                                          L"Headphones",
+                                          L"Microphone",
+                                          L"Headset",
+                                          L"Handset",
+                                          L"UnknownDigitalPassthrough",
+                                          L"SPDIF",
+                                          L"DigitalAudioDisplayDevice",
+                                          L"UnknownFormFactor" };
+
+    struct state_string
+    {
+        DWORD state;
+        wchar_t const *name;
+    };
+    state_string state_strings[] = { { DEVICE_STATE_ACTIVE, L"Active" },
+                                     { DEVICE_STATE_DISABLED, L"Disabled" },
+                                     { DEVICE_STATE_NOTPRESENT, L"Not Present" },
+                                     { DEVICE_STATE_UNPLUGGED, L"Unplugged" } };
+
+    std::wstring get_state_string(DWORD state)
+    {
+        std::wstring s;
+        wchar_t const *sep = L"";
+        for(auto const &state_str : state_strings) {
+            if((state_str.state & state) != 0) {
+                s = std::format(L"{}{}{}", s, sep, state_str.name);
+                sep = L" ";
+            }
+        }
+        return s;
+    }
+
     HRESULT audio_controller::attach_to_default_endpoint()
     {
         std::lock_guard lock(endpoint_mutex);
 
+#if ENUMERATE_AUDIO_INPUT_DEVICES
+        ComPtr<IMMDeviceCollection> device_collection;
+        HR(enumerator->EnumAudioEndpoints(eCapture, DEVICE_STATEMASK_ALL, &device_collection));
+        UINT num_devices;
+        HR(device_collection->GetCount(&num_devices));
+        LOG_DEBUG("There are {} devices", num_devices);
+        for(UINT i = 0; i < num_devices; ++i) {
+            ComPtr<IMMDevice> device;
+            HR(device_collection->Item(i, &device));
+
+            wchar_t *device_id;
+            HR(device->GetId(&device_id));
+            DEFER(CoTaskMemFree(device_id));
+
+            DWORD state;
+            HR(device->GetState(&state));
+
+            if((state & DEVICE_STATE_NOTPRESENT) != 0) {
+                continue;
+            }
+
+            ComPtr<IPropertyStore> property_store;
+            HR(device->OpenPropertyStore(STGM_READ, &property_store));
+            DWORD prop_count;
+            HR(property_store->GetCount(&prop_count));
+            PROPVARIANT formfactor_property;
+            if(!SUCCEEDED(property_store->GetValue(PKEY_AudioEndpoint_FormFactor, &formfactor_property))) {
+                LOG_DEBUG("Device {:3d}: no form factor?", i);
+                continue;
+            }
+            uint32 formfactor = formfactor_property.uintVal;
+            if(formfactor != Microphone && formfactor != LineLevel || formfactor > _countof(formfactor_names)) {
+                continue;
+            }
+            PROPVARIANT name_prop;
+            if(!SUCCEEDED(property_store->GetValue(PKEY_Device_FriendlyName, &name_prop))) {
+                LOG_DEBUG("Device {:3d}: ??", i);
+                continue;
+            }
+            LOG_INFO(L"Device {:3d}: {} {} [{}] (ID:{})", i, name_prop.pwszVal, formfactor_names[formfactor],
+                     get_state_string(state), device_id);
+        }
+#endif
+
         HR(enumerator->GetDefaultAudioEndpoint(eCapture, eCommunications, &audio_endpoint));
+
         HR(audio_endpoint->Activate(__uuidof(volume_control), CLSCTX_INPROC_SERVER, NULL, (void **)&volume_control));
         HR(volume_control->RegisterControlChangeNotify(this));
         volume_registered = true;
@@ -130,9 +220,15 @@ namespace chs::mic_muter
 
     HRESULT audio_controller::OnDefaultDeviceChanged(EDataFlow flow, ERole role, LPCWSTR pwstrDeviceId)
     {
+        LOG_DEBUG("OnDefaultDeviceChanged: flow = {}, role = {}", (int)flow, (int)role);
         if(flow == eCapture && role == eCommunications && overlay_hwnd != nullptr) {
             PostMessage(overlay_hwnd, WM_APP_ENDPOINT_CHANGE, 0, 0);
         }
+        return S_OK;
+    }
+
+    HRESULT audio_controller::OnPropertyValueChanged(LPCWSTR name, const PROPERTYKEY property_key)
+    {
         return S_OK;
     }
 
@@ -143,8 +239,9 @@ namespace chs::mic_muter
     //  mute state for the endpoint we are monitoring
     // ----------------------------------------------------------------------
 
-    HRESULT audio_controller::OnNotify(PAUDIO_VOLUME_NOTIFICATION_DATA /*pNotify*/)
+    HRESULT audio_controller::OnNotify(PAUDIO_VOLUME_NOTIFICATION_DATA pNotify)
     {
+        UNREFERENCED_PARAMETER(pNotify);
         if(overlay_hwnd != nullptr) {
             PostMessage(overlay_hwnd, WM_APP_SHOW_OVERLAY, 0, 0);
         }

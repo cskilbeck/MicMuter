@@ -88,8 +88,8 @@ namespace chs::mic_muter
 
         bool run_at_startup{ true };
 
-        byte hotkey{ VK_CAPITAL };
-        byte modifiers{ keymod_ctrl };
+        byte hotkey{ VK_VOLUME_MUTE };
+        byte modifiers{ 0 };
 
         HRESULT save_run_at_startup();
 

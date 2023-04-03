@@ -25,6 +25,8 @@ static int constexpr keymod_alt = 1 << 1;
 static int constexpr keymod_shift = 1 << 2;
 static int constexpr keymod_winkey = 1 << 3;
 
+static int constexpr keymod_all = (keymod_ctrl | keymod_alt | keymod_shift | keymod_winkey);
+
 //////////////////////////////////////////////////////////////////////
 
 HOOKDLL_API LRESULT CALLBACK mic_mute_hook_function(int nCode, WPARAM wParam, LPARAM lParam);

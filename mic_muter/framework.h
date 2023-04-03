@@ -9,6 +9,8 @@
 #define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
 
+#define INITGUID
+
 #include <windows.h>
 #include <windowsx.h>
 #include <commctrl.h>
@@ -18,6 +20,8 @@
 #include <wincodec.h>
 #include <mmdeviceapi.h>
 #include <endpointvolume.h>
+#include <Functiondiscoverykeys_devpkey.h>
+#include <Ksmedia.h>
 
 //////////////////////////////////////////////////////////////////////
 

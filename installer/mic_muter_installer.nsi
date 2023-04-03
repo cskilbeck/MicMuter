@@ -73,8 +73,8 @@ ShowUnInstDetails show
 
 ######################################################################
 
-LangString termMsg ${LANG_ENGLISH} "Installer cannot stop running ${PRODUCT_NAME}.$\nDo you want to terminate process?"
-LangString stopMsg ${LANG_ENGLISH} "Stopping ${PRODUCT_NAME} Application"
+LangString termMsg ${LANG_ENGLISH} "Installer cannot stop the ${PRODUCT_NAME} application.$\nDo you want to terminate it?"
+LangString stopMsg ${LANG_ENGLISH} "Stopping ${PRODUCT_NAME} application"
 
 !define WND_CLASS "mic_muter_overlay_FC29A1DC-16DE-4E9A-83E5-2DD9A5E034AA"
 !define SYNC_TERM 0x00100001
