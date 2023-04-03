@@ -553,6 +553,7 @@ namespace
         }
 
         case WM_DESTROY:
+            LOG_INFO("WM_DESTROY");
             DestroyWindow(drag_hwnd);
             drag_hwnd = nullptr;
             notify_icon.destroy(hWnd);
@@ -622,6 +623,7 @@ namespace
             break;
 
         case WM_APP_ENDPOINT_CHANGE:
+            LOG_INFO("WM_APP_ENDPOINT_CHANGE");
             audio->refresh_endpoint();
             PostMessage(overlay_hwnd, WM_APP_SHOW_OVERLAY, 0, 0);
             break;

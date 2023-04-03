@@ -19,6 +19,16 @@ add_subdirectory(include)
 add_subdirectory(source)
 add_subdirectory(3rdparty/plutovg)
 
+if (MSVC AND NOT BUILD_SHARED_LIBS)
+    # Set the output name for debugger files, otherwise they are not generated:
+    set_target_properties(${PROJECT_NAME}
+        PROPERTIES
+        COMPILE_PDB_NAME_DEBUG ${PROJECT_NAME}
+        COMPILE_PDB_NAME_RELEASE ${PROJECT_NAME}
+        COMPILE_PDB_NAME_MINSIZEREL ${PROJECT_NAME}
+        COMPILE_PDB_NAME_RELWITHDEBINFO ${PROJECT_NAME})
+endif()
+
 if(BUILD_SHARED_LIBS)
     target_compile_definitions(lunasvg PUBLIC LUNASVG_SHARED)
     target_compile_definitions(lunasvg PRIVATE LUNASVG_EXPORT)
@@ -27,6 +37,11 @@ endif()
 if(LUNASVG_BUILD_EXAMPLES)
     add_subdirectory(example)
 endif()
+
+set(COMPILE_PDB_OUTPUT_DIRECTORY_DEBUG, ${CMAKE_INSTALL_PREFIX}/lib)
+set(COMPILE_PDB_OUTPUT_DIRECTORY_RELEASE, ${CMAKE_INSTALL_PREFIX}/lib)
+set(COMPILE_PDB_OUTPUT_DIRECTORY_MINSIZEREL, ${CMAKE_INSTALL_PREFIX}/lib)
+set(COMPILE_PDB_OUTPUT_DIRECTORY_RELWITHDEBINFO , ${CMAKE_INSTALL_PREFIX}/lib)
 
 set(LUNASVG_LIBDIR ${CMAKE_INSTALL_PREFIX}/lib)
 set(LUNASVG_INCDIR ${CMAKE_INSTALL_PREFIX}/include)

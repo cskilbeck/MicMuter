@@ -1,4 +1,7 @@
 #include "framework.h"
+#include "PropVarUtil.h"
+
+#pragma comment(lib, "Propsys.lib")
 
 namespace
 {
@@ -83,6 +86,8 @@ namespace chs::mic_muter
     //  Start monitoring the current default input audio device
     // ----------------------------------------------------------------------
 
+    // formfactor names culled from mmdeviceapi.h, enum __MIDL___MIDL_itf_mmdeviceapi_0000_0000_0003
+
     wchar_t const *formfactor_names[] = { L"RemoteNetworkDevice",
                                           L"Speakers",
                                           L"LineLevel",
@@ -122,6 +127,7 @@ namespace chs::mic_muter
     {
         std::lock_guard lock(endpoint_mutex);
 
+#if ENUMERATE_AUDIO_INPUT_DEVICES
         ComPtr<IMMDeviceCollection> device_collection;
         HR(enumerator->EnumAudioEndpoints(eCapture, DEVICE_STATEMASK_ALL, &device_collection));
         UINT num_devices;
@@ -130,6 +136,10 @@ namespace chs::mic_muter
         for(UINT i = 0; i < num_devices; ++i) {
             ComPtr<IMMDevice> device;
             HR(device_collection->Item(i, &device));
+
+            wchar_t *device_id;
+            HR(device->GetId(&device_id));
+            DEFER(CoTaskMemFree(device_id));
 
             DWORD state;
             HR(device->GetState(&state));
@@ -156,9 +166,10 @@ namespace chs::mic_muter
                 LOG_DEBUG("Device {:3d}: ??", i);
                 continue;
             }
-            LOG_INFO(L"Device {:3d}: {} {} [{}]", i, name_prop.pwszVal, formfactor_names[formfactor],
-                     get_state_string(state));
+            LOG_INFO(L"Device {:3d}: {} {} [{}] (ID:{})", i, name_prop.pwszVal, formfactor_names[formfactor],
+                     get_state_string(state), device_id);
         }
+#endif
 
         HR(enumerator->GetDefaultAudioEndpoint(eCapture, eCommunications, &audio_endpoint));
 
@@ -209,9 +220,15 @@ namespace chs::mic_muter
 
     HRESULT audio_controller::OnDefaultDeviceChanged(EDataFlow flow, ERole role, LPCWSTR pwstrDeviceId)
     {
+        LOG_DEBUG("OnDefaultDeviceChanged: flow = {}, role = {}", (int)flow, (int)role);
         if(flow == eCapture && role == eCommunications && overlay_hwnd != nullptr) {
             PostMessage(overlay_hwnd, WM_APP_ENDPOINT_CHANGE, 0, 0);
         }
+        return S_OK;
+    }
+
+    HRESULT audio_controller::OnPropertyValueChanged(LPCWSTR name, const PROPERTYKEY property_key)
+    {
         return S_OK;
     }
 

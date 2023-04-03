@@ -91,7 +91,7 @@ namespace chs::logger
         {
             std::lock_guard<std::mutex> lock(log_console_mutex);
             ensure_console_exists();
-            printf("%s", s);
+            puts(s);
         }
 
         static void format_time_ansi(char *time_buffer, size_t const buffer_size, struct tm const &timeinfo)
