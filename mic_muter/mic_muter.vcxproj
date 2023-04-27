@@ -299,10 +299,10 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)images\header\%(Filename)_svg.h</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)images\header\%(Filename)_svg.h</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)images\header\%(Filename)_svg.h</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">call $(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">call $(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">call $(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">call $(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)svg_to_header.bat</AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)svg_to_header.bat</AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)svg_to_header.bat</AdditionalInputs>
@@ -338,10 +338,10 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)images\header\%(Filename)_svg.h</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)images\header\%(Filename)_svg.h</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)images\header\%(Filename)_svg.h</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">call $(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">call $(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">call $(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">call $(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)svg_to_header.bat</AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)svg_to_header.bat</AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)svg_to_header.bat</AdditionalInputs>
@@ -377,10 +377,10 @@
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)images\header\%(Filename)_svg.h</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)images\header\%(Filename)_svg.h</Outputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)images\header\%(Filename)_svg.h</Outputs>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">call $(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">call $(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">call $(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">call $(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)svg_to_header.bat</AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)svg_to_header.bat</AdditionalInputs>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)svg_to_header.bat</AdditionalInputs>
@@ -409,10 +409,10 @@
   <ItemGroup>
     <CustomBuild Include="images\microphone_disconnected_small.svg">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">call $(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">call $(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">call $(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">call $(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">SVG to Header %(Filename)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">SVG to Header %(Filename)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">SVG to Header %(Filename)</Message>
@@ -436,10 +436,10 @@
     </CustomBuild>
     <CustomBuild Include="images\microphone_mute_small.svg">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">call $(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">call $(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">call $(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">call $(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">SVG to Header %(Filename)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">SVG to Header %(Filename)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">SVG to Header %(Filename)</Message>
@@ -463,10 +463,10 @@
     </CustomBuild>
     <CustomBuild Include="images\microphone_normal_small.svg">
       <FileType>Document</FileType>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">call $(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">call $(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">call $(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|x64'">call $(ProjectDir)svg_to_header.bat %(FullPath) $(ProjectDir)images\header\%(Filename)_svg.h</Command>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">SVG to Header %(Filename)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">SVG to Header %(Filename)</Message>
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">SVG to Header %(Filename)</Message>
